@@ -1,0 +1,811 @@
+{
+	"info": {
+		"_postman_id": "58aa69b4-eb17-48d2-81f4-fbd027282605",
+		"name": "StudentDemoAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2608227",
+		"_collection_link": "https://harridev.postman.co/workspace/6030e031-453c-4baf-8614-0fed30f79527/collection/2608227-58aa69b4-eb17-48d2-81f4-fbd027282605?action=share&source=collection_link&creator=2608227"
+	},
+	"item": [
+		{
+			"name": "students",
+			"item": [
+				{
+					"name": "{sId}",
+					"item": [
+						{
+							"name": "Get Student",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "6599",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Successful operation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"name\": \"string\",\n  \"sId\": 4911,\n  \"GPA\": 442.48265490607344\n}"
+								}
+							]
+						},
+						{
+							"name": "Update Student",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Postman PUT\",\n  \"GPA\": 1.99\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "1000",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"string\",\n  \"GPA\": 1631.9917869355627\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Patch Student",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Postman patched student\",\n  \"GPA\": 1.39\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "1000",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"string\",\n  \"GPA\": 1640.324251822569\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "Delete Student",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "1000",
+											"description": "(Required) "
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Add Student",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"New Postman student\",\n  \"GPA\": 1.99\n}",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/students",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful operation",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"string\",\n  \"GPA\": 1631.9917869355627\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "3482"
+						}
+					]
+				},
+				{
+					"name": "Get Students",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/students?GPA.Gt=2.43&page=1&orderBy=DESC",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"students"
+							],
+							"query": [
+								{
+									"key": "sId",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "string",
+									"disabled": true
+								},
+								{
+									"key": "GPA.IsNull",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "GPA.Lt",
+									"value": "3.52",
+									"disabled": true
+								},
+								{
+									"key": "GPA.Gt",
+									"value": "2.43"
+								},
+								{
+									"key": "GPA.Eq",
+									"value": "4",
+									"disabled": true
+								},
+								{
+									"key": "sortColumn",
+									"value": "GPA",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "orderBy",
+									"value": "DESC",
+									"description": "'ASC' or 'DESC'"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Successful operation (auto generated)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/students?sId=197030399&name=string&GPA.IsNull=false&GPA.Lt=5152.646426319438&GPA.Gt=5152.646426319438&GPA.Eq=5152.646426319438&orderBy=0&sortColumn=sId&page=1&pageSize=10",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students"
+									],
+									"query": [
+										{
+											"key": "sId",
+											"value": "197030399"
+										},
+										{
+											"key": "name",
+											"value": "string"
+										},
+										{
+											"key": "GPA.IsNull",
+											"value": "false"
+										},
+										{
+											"key": "GPA.Lt",
+											"value": "5152.646426319438"
+										},
+										{
+											"key": "GPA.Gt",
+											"value": "5152.646426319438"
+										},
+										{
+											"key": "GPA.Eq",
+											"value": "5152.646426319438"
+										},
+										{
+											"key": "orderBy",
+											"value": "0"
+										},
+										{
+											"key": "sortColumn",
+											"value": "sId"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"items\": [\n    {\n      \"name\": \"string\",\n      \"sId\": 8393,\n      \"GPA\": 2978.595318607791\n    },\n    {\n      \"name\": \"string\",\n      \"sId\": 3495,\n      \"GPA\": 5694.288711706499\n    }\n  ],\n  \"page\": 946,\n  \"pageSize\": 9875,\n  \"totalCount\": 4549,\n  \"totalPageCount\": 7881,\n  \"hasNextPage\": false,\n  \"hasPreviousPage\": false\n}"
+						},
+						{
+							"name": "Get Students",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/students?GPA.Gt=2.43&page=1&orderBy=DESC",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students"
+									],
+									"query": [
+										{
+											"key": "sId",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "string",
+											"disabled": true
+										},
+										{
+											"key": "GPA.IsNull",
+											"value": "false",
+											"disabled": true
+										},
+										{
+											"key": "GPA.Lt",
+											"value": "3.52",
+											"disabled": true
+										},
+										{
+											"key": "GPA.Gt",
+											"value": "2.43"
+										},
+										{
+											"key": "GPA.Eq",
+											"value": "4",
+											"disabled": true
+										},
+										{
+											"key": "sortColumn",
+											"value": "GPA",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "pageSize",
+											"value": "10",
+											"disabled": true
+										},
+										{
+											"key": "orderBy",
+											"value": "DESC",
+											"description": "'ASC' or 'DESC'"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 06 Aug 2025 04:18:25 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"items\": [\n        {\n            \"sId\": 6584,\n            \"name\": \"Postman Test Student\",\n            \"GPA\": 3.54\n        },\n        {\n            \"sId\": 6583,\n            \"name\": \"Postman Test Student\",\n            \"GPA\": 3.54\n        },\n        {\n            \"sId\": 4450,\n            \"name\": \"Tester Student To Not Delete\",\n            \"GPA\": 3.59\n        },\n        {\n            \"sId\": 4423,\n            \"name\": \"Tester Student To Not Delete\",\n            \"GPA\": 3.59\n        },\n        {\n            \"sId\": 3421,\n            \"name\": \"Tester Student To Not Delete\",\n            \"GPA\": 3.59\n        },\n        {\n            \"sId\": 3369,\n            \"name\": \"New Test Student 3\",\n            \"GPA\": 3.71\n        },\n        {\n            \"sId\": 3361,\n            \"name\": \"New Test Student 3\",\n            \"GPA\": 3.71\n        },\n        {\n            \"sId\": 3332,\n            \"name\": \"New Test Student 3\",\n            \"GPA\": 3.71\n        },\n        {\n            \"sId\": 3324,\n            \"name\": \"New Test Student 3\",\n            \"GPA\": 3.71\n        },\n        {\n            \"sId\": 3316,\n            \"name\": \"New Test Student 3\",\n            \"GPA\": 3.71\n        }\n    ],\n    \"page\": 1,\n    \"pageSize\": 10,\n    \"totalCount\": 602,\n    \"totalPageCount\": 61,\n    \"hasNextPage\": true,\n    \"hasPreviousPage\": false\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is formed correctly\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(response).to.include({\r",
+							"        status: 'Healthy',\r",
+							"        totalDuration: pm.expect.it('string'),\r",
+							"        entries: {\r",
+							"            sql: {\r",
+							"                data: {},\r",
+							"                duration: pm.expect.it('string'),\r",
+							"                status: 'Healthy',\r",
+							"                tags: pm.expect.it('array')\r",
+							"            }\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "200 OK",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/health",
+							"path": [
+								"health"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "content-type",
+							"value": "application/json"
+						},
+						{
+							"key": "date",
+							"value": "Tue, 12 Aug 2025 09:33:07 GMT"
+						},
+						{
+							"key": "server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "cache-control",
+							"value": "no-store, no-cache"
+						},
+						{
+							"key": "expires",
+							"value": "Thu, 01 Jan 1970 00:00:00 GMT"
+						},
+						{
+							"key": "pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "x-ms-middleware-request-id",
+							"value": "b433bbfd-0323-48d3-9896-2af809f63a78"
+						},
+						{
+							"key": "strict-transport-security",
+							"value": "max-age=31536000; includeSubDomains"
+						},
+						{
+							"key": "transfer-encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"Healthy\",\n    \"totalDuration\": \"00:00:00.0053008\",\n    \"entries\": {\n        \"sql\": {\n            \"data\": {},\n            \"duration\": \"00:00:00.0052018\",\n            \"status\": \"Healthy\",\n            \"tags\": []\n        }\n    }\n}"
+				},
+				{
+					"name": "503 Service Unavailable",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/health",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"status": "Service Unavailable",
+					"code": 503,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 12 Aug 2025 23:33:03 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store, no-cache"
+						},
+						{
+							"key": "Expires",
+							"value": "Thu, 01 Jan 1970 00:00:00 GMT"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"Unhealthy\",\n    \"totalDuration\": \"00:00:04.8643141\",\n    \"entries\": {\n        \"sql\": {\n            \"data\": {},\n            \"description\": \"A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)\",\n            \"duration\": \"00:00:04.8621251\",\n            \"exception\": \"A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server)\",\n            \"status\": \"Unhealthy\",\n            \"tags\": []\n        }\n    }\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

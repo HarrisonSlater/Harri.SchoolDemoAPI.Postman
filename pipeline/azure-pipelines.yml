@@ -1,0 +1,93 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-24.04'
+
+variables:
+  DockerNamespace: harrisonslater
+  DockerSQLImageRepository: harri-schooldemosql-database
+  DockerSQLImageName: $(DockerSQLImageRepository):latest
+  DockerImageRepository: harri-schooldemoapi
+  DockerImageName: $(DockerImageRepository):latest
+  DockerVersion: '25.0.5'
+
+  APIPortToTest: 8080
+  APIUrlToTest: 'http://localhost:$(APIPortToTest)/'
+
+stages:
+- stage: 'RunPostmanAgainstContainer'
+  displayName: 'Run Postman Tests Against Container'
+  jobs: 
+    - job: 'DeployAndTestDockerJob'
+      displayName: 'Deploy Docker container (in-agent) and run Postman tests'
+      steps:
+
+      - task: DockerInstaller@0
+        inputs:
+          dockerVersion: $(DockerVersion)
+
+      - script: 'docker pull $(DockerNamespace)/$(DockerImageName)'
+        displayName: docker pull REST API Image
+
+      - script: 'docker pull $(DockerNamespace)/$(DockerSQLImageName)'
+        displayName: docker pull SQL DB Image
+
+      - script: 'docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=p@ssw0rd" -p 1433:1433 -d $(DockerNamespace)/$(DockerSQLImageName)'
+        displayName: docker run - School Demo SQL DB Container
+      
+      - script: 'docker run -d -p $(APIPortToTest):8080 --add-host=host.docker.internal:host-gateway --name schooldemorestapi harrisonslater/$(DockerImageName)'
+        displayName: docker run - School Demo API Container
+
+# scripts for debugging api container issues
+#      - script: 'docker stats --no-stream'
+#      - script: 'docker network ls'
+#      - script: 'docker network inspect bridge'
+#      - script: 'sleep 5'
+#      - script: 'curl -X GET -S -L $(APIUrlToTest)openapi'
+#      - script: 'curl -X GET -S $(APIUrlToTest)students/123'
+#      - script: curl -X GET -S -L $(APIUrlToTest)health --max-time 15 --fail
+
+      - task: Bash@3
+        inputs:
+          filePath: './pipeline/scripts/wait-for-healthy-container.sh'
+          arguments: 'schooldemorestapi 45'
+        displayName: bash - Wait for healthy REST API container
+
+
+#     - task: FileTransform@1
+#        displayName: testappsettings.json transform
+#        inputs:
+#          folderPath: '$(Build.Repository.LocalPath)/src/Tests/Harri.SchoolDemoAPI.Tests.E2E'
+#          fileType: 'json'
+#          targetFiles: 'testappsettings.json'
+
+
+      - script: 'npm install -g newman'
+      - script: |
+          cd $(System.DefaultWorkingDirectory)/postman/collections
+          newman run 2608227-dd6ee17e-d4e9-444f-a04e-ace924896145.json --env-var "BaseURL=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code 
+      #--env-var "BaseURL=localhost:8080"
+#--environment Local.environment.json
+      
+      #> output-report.log
+      
+      #- task: PublishPipelineArtifact@1
+      #  inputs:
+      #    targetPath: '$(System.DefaultWorkingDirectory)/postman/collections/output-report.log'
+      #    artifact: 'output-report.log'
+      #    publishLocation: 'pipeline'
+      
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '**/results.xml'
+          failTaskOnFailedTests: true
+          failTaskOnFailureToPublishResults: true
+          failTaskOnMissingResultsFile: true
+          
