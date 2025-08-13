@@ -71,7 +71,7 @@ stages:
       - script: 'npm install -g newman'
       - script: |
           cd $(System.DefaultWorkingDirectory)/postman/collections
-          newman run StudentDemoAPI.postman_collection.json --env-var "BaseURL=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code 
+          newman run StudentDemoAPI.postman_collection.json --env-var "baseUrl=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code 
       
       #> output-report.log
       
