@@ -89,3 +89,27 @@ stages:
           failTaskOnFailureToPublishResults: true
           failTaskOnMissingResultsFile: true
           
+- stage: 'PostGithubCommitStatus'
+  displayName: 'Github Commit Status'
+  dependsOn:
+  - 'RunPostmanAgainstContainer'
+  condition: always()
+  jobs:
+    - job: 'GithubPostSuccessCommitStatus'
+      displayName: 'Successful - Update Github Commit Status'
+      condition:  succeeded()
+      steps:
+      - checkout: none
+      - template: /pipeline/tasks/rest-github-commit-check.yml
+        parameters:
+          state: 'success'
+          description: 'The build succeeded'
+    - job: 'GithubPostFailureCommitStatus'
+      displayName: 'Failure - Update Github Commit Status'
+      condition: failed()
+      steps:
+      - checkout: none
+      - template: /pipeline/tasks/rest-github-commit-check.yml
+        parameters:
+          state: 'failure'
+          description: 'The build failed'
