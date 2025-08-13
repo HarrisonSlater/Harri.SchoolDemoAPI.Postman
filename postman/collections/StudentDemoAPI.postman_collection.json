@@ -4,7 +4,7 @@
 		"name": "StudentDemoAPI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2608227",
-		"_collection_link": "https://harridev.postman.co/workspace/6030e031-453c-4baf-8614-0fed30f79527/collection/2608227-58aa69b4-eb17-48d2-81f4-fbd027282605?action=share&source=collection_link&creator=2608227"
+		"_collection_link": "https://harridev.postman.co/workspace/SchoolDemoAPI-Workspace~6030e031-453c-4baf-8614-0fed30f79527/collection/2608227-58aa69b4-eb17-48d2-81f4-fbd027282605?action=share&source=collection_link&creator=2608227"
 	},
 	"item": [
 		{
@@ -82,7 +82,7 @@
 									"variable": [
 										{
 											"key": "sId",
-											"value": "1",
+											"value": "999",
 											"description": "(Required) Student Id"
 										}
 									]
@@ -100,11 +100,10 @@
 											}
 										],
 										"url": {
-											"raw": "localhost:8080/students/:sId",
+											"raw": "{{baseUrl}}/students/:sId",
 											"host": [
-												"localhost"
+												"{{baseUrl}}"
 											],
-											"port": "8080",
 											"path": [
 												"students",
 												":sId"
@@ -275,6 +274,27 @@
 										"type": "text/javascript",
 										"packages": {}
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const requestPath = pm.request.url.getPath()\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: pm.environment.get(\"baseUrl\") + requestPath,\r",
+											"    method: 'GET'\r",
+											"}, function (err, res) {\r",
+											"\r",
+											"    const etag = res.headers.get(\"etag\")\r",
+											"    pm.variables.set(\"ExistingStudentETagHeader\", etag);\r",
+											"\r",
+											"    console.info(`Retrieved ETag ${etag} for ${pm.request.url.getPath()}, and set on ${pm.request.method}`)\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
 							],
 							"request": {
@@ -287,8 +307,8 @@
 									},
 									{
 										"key": "If-Match",
-										"value": "AAAAAAABtYc=",
-										"description": "(Required) Value from ETag Header returned on GET",
+										"value": "{{ExistingStudentETagHeader}}",
+										"description": "(Required) Value from ETag Header returned on GET. Auto set in pre-request script",
 										"type": "text"
 									}
 								],
@@ -347,11 +367,10 @@
 											}
 										},
 										"url": {
-											"raw": "localhost:8080/students/:sId",
+											"raw": "{{baseUrl}}/students/:sId",
 											"host": [
-												"localhost"
+												"{{baseUrl}}"
 											],
-											"port": "8080",
 											"path": [
 												"students",
 												":sId"
@@ -384,7 +403,6 @@
 										{
 											"key": "Content-Type",
 											"value": "application/json",
-											"name": "Content-Type",
 											"description": "",
 											"type": "text"
 										}
@@ -685,6 +703,27 @@
 										"type": "text/javascript",
 										"packages": {}
 									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const requestPath = pm.request.url.getPath()\r",
+											"\r",
+											"pm.sendRequest({\r",
+											"    url: pm.environment.get(\"baseUrl\") + requestPath,\r",
+											"    method: 'GET'\r",
+											"}, function (err, res) {\r",
+											"\r",
+											"    const etag = res.headers.get(\"etag\")\r",
+											"    pm.variables.set(\"ExistingStudentETagHeader\", etag);\r",
+											"\r",
+											"    console.info(`Retrieved ETag ${etag} for ${pm.request.url.getPath()}, and set If-Match on ${pm.request.method}`)\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
 								}
 							],
 							"request": {
@@ -696,14 +735,14 @@
 									},
 									{
 										"key": "If-Match",
-										"value": "AAAAAAABtYQ=",
-										"description": "(Required) Value from ETag Header returned on GET",
+										"value": "{{ExistingStudentETagHeader}}",
+										"description": "(Required) Value from ETag Header returned on GET. Auto set in pre-request script",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"Ethan Davis\"\n}",
+									"raw": "{\n    \"name\": \"Ethan Davies\"\n}",
 									"options": {
 										"raw": {
 											"headerFamily": "json",
@@ -757,11 +796,10 @@
 											}
 										},
 										"url": {
-											"raw": "localhost:8080/students/:sId",
+											"raw": "{{baseUrl}}/students/:sId",
 											"host": [
-												"localhost"
+												"{{baseUrl}}"
 											],
-											"port": "8080",
 											"path": [
 												"students",
 												":sId"
@@ -1182,11 +1220,10 @@
 										"method": "DELETE",
 										"header": [],
 										"url": {
-											"raw": "localhost:8080/students/:sId",
+											"raw": "{{baseUrl}}/students/:sId",
 											"host": [
-												"localhost"
+												"{{baseUrl}}"
 											],
-											"port": "8080",
 											"path": [
 												"students",
 												":sId"
@@ -1439,11 +1476,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8080/students",
+									"raw": "{{baseUrl}}/students",
 									"host": [
-										"localhost"
+										"{{baseUrl}}"
 									],
-									"port": "8080",
 									"path": [
 										"students"
 									]
@@ -1658,11 +1694,10 @@
 									}
 								],
 								"url": {
-									"raw": "localhost:8080/students",
+									"raw": "{{baseUrl}}/students",
 									"host": [
-										"localhost"
+										"{{baseUrl}}"
 									],
-									"port": "8080",
 									"path": [
 										"students"
 									],
@@ -2291,11 +2326,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/health",
+							"raw": "{{baseUrl}}/health",
 							"host": [
-								"localhost"
+								"{{baseUrl}}"
 							],
-							"port": "8080",
 							"path": [
 								"health"
 							]
