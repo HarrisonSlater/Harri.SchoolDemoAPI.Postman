@@ -4,7 +4,7 @@
 		"name": "StudentDemoAPI",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2608227",
-		"_collection_link": "https://harridev.postman.co/workspace/SchoolDemoAPI-Workspace~6030e031-453c-4baf-8614-0fed30f79527/collection/2608227-58aa69b4-eb17-48d2-81f4-fbd027282605?action=share&source=collection_link&creator=2608227"
+		"_collection_link": "https://harridev.postman.co/workspace/6030e031-453c-4baf-8614-0fed30f79527/collection/2608227-58aa69b4-eb17-48d2-81f4-fbd027282605?action=share&source=collection_link&creator=2608227"
 	},
 	"item": [
 		{
@@ -15,6 +15,53 @@
 					"item": [
 						{
 							"name": "Get Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											"\r",
+											"const responseData = pm.response.json();\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields: sId, name, and GPA\", function () {\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.all.keys('sId', 'name', 'GPA');\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"GPA is a number and within the valid range\", function () {\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.GPA).to.exist.and.to.be.a('number').and.to.be.within(0, 4.0);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Name must be a non-empty string\", function () {\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"ETag header is present and has a value\", function() {\r",
+											"\r",
+											"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+											"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [
@@ -35,15 +82,72 @@
 									"variable": [
 										{
 											"key": "sId",
-											"value": "6599",
-											"description": "(Required) "
+											"value": "1",
+											"description": "(Required) Student Id"
 										}
 									]
 								}
 							},
 							"response": [
 								{
-									"name": "Successful operation",
+									"name": "200 OK",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "localhost:8080/students/:sId",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "1",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:31:44 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "ETag",
+											"value": "AAAAAAAAD6E="
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sId\": 1,\n    \"name\": \"Olivia Jackson\",\n    \"GPA\": 1.42\n}"
+								},
+								{
+									"name": "404 Not Found",
 									"originalRequest": {
 										"method": "GET",
 										"header": [
@@ -63,38 +167,134 @@
 											],
 											"variable": [
 												{
-													"key": "sId"
+													"key": "sId",
+													"value": "10001",
+													"description": "(Required) Student Id"
 												}
 											]
 										}
 									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": null,
 									"header": [
 										{
 											"key": "Content-Type",
-											"value": "application/json"
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:33:58 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
 										}
 									],
 									"cookie": [],
-									"body": "{\n  \"name\": \"string\",\n  \"sId\": 4911,\n  \"GPA\": 442.48265490607344\n}"
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-df3f2e5c143373641f4c7dd16c72a785-94d1ccf23f1a388d-00\"\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "2147483648",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:34:51 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"sId\": [\n            \"The value '2147483648' is not valid.\"\n        ]\n    },\n    \"traceId\": \"00-aaca48a5d751576fdfa7565e32d19971-0a8f37a36e2260bf-00\"\n}"
 								}
 							]
 						},
 						{
 							"name": "Update Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body is empty\", function() {\r",
+											"    pm.expect(pm.response.body).to.be.undefined;\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "PUT",
 								"header": [
 									{
 										"key": "Content-Type",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "If-Match",
+										"value": "AAAAAAABtYc=",
+										"description": "(Required) Value from ETag Header returned on GET",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"Postman PUT\",\n  \"GPA\": 1.99\n}",
+									"raw": "{\n    \"name\": \"Mia Fernández\",\n    \"GPA\": 3.03\n}",
 									"options": {
 										"raw": {
 											"headerFamily": "json",
@@ -114,15 +314,86 @@
 									"variable": [
 										{
 											"key": "sId",
-											"value": "1000",
-											"description": "(Required) "
+											"value": "999",
+											"description": "(Required) Student Id"
 										}
 									]
 								}
 							},
 							"response": [
 								{
-									"name": "Success",
+									"name": "200 OK",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "If-Match",
+												"value": "AAAAAAAAE4s=",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Mia Fernández\",\n  \"GPA\": 3.51\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/students/:sId",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "999",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Length",
+											"value": "0"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:51:43 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json",
+											"name": "Content-Type",
+											"description": "",
+											"type": "text"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "428 Precondition Required (Missing If-Match header)",
 									"originalRequest": {
 										"method": "PUT",
 										"header": [
@@ -133,7 +404,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"string\",\n  \"GPA\": 1631.9917869355627\n}",
+											"raw": "{\n  \"name\": \"Mia Fernández\",\n  \"GPA\": 3.51\n}",
 											"options": {
 												"raw": {
 													"headerFamily": "json",
@@ -152,33 +423,287 @@
 											],
 											"variable": [
 												{
-													"key": "sId"
+													"key": "sId",
+													"value": "999",
+													"description": "(Required) Student Id"
 												}
 											]
 										}
 									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [],
+									"status": "Precondition Required",
+									"code": 428,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:48:32 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
 									"cookie": [],
-									"body": ""
+									"body": "{\n    \"status\": 428,\n    \"traceId\": \"00-d8b2ee33e0357ed85e11bd20f69342a9-34c669df6b42f6df-00\"\n}"
+								},
+								{
+									"name": "412 Precondition Failed (Bad If-Match header value)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "If-Match",
+												"value": "BadValue",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Mia Fernández\",\n  \"GPA\": 3.51\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "999",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Precondition Failed",
+									"code": 412,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:50:45 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.13\",\n    \"title\": \"Precondition Failed\",\n    \"status\": 412,\n    \"traceId\": \"00-4e2807fa2a2b4c4d5df968ffae34a376-c211a8f385752ccb-00\"\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "If-Match",
+												"value": "AAAAAAAAE4s=",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"GPA\": 3.51\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "999",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:01:46 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"name\": [\n            \"The name field is required.\"\n        ]\n    },\n    \"traceId\": \"00-ee8bd80ac539a6cc7ccaa10b55958953-edee85a90af8a95d-00\"\n}"
+								},
+								{
+									"name": "404 Not Found",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "If-Match",
+												"value": "AAAAAAAAE4s=",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"name\": \"Mia Fernández\",\n    \"GPA\": 3.03\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:03:37 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-e32495ae35acf4c960cf1c2cedec6cc5-df21f48db360a399-00\"\n}"
 								}
 							]
 						},
 						{
 							"name": "Patch Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body has values\", function() {\r",
+											"    const responseBody = pm.response.json();\r",
+											"    pm.expect(responseBody).to.have.keys(\"sId\", \"name\", \"GPA\");\r",
+											"    pm.expect(responseBody.name).to.be.a('string')\r",
+											"    pm.expect(responseBody.sId).to.be.a('number')\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "PATCH",
 								"header": [
 									{
 										"key": "Content-Type",
 										"value": "application/json"
+									},
+									{
+										"key": "If-Match",
+										"value": "AAAAAAABtYQ=",
+										"description": "(Required) Value from ETag Header returned on GET",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"Postman patched student\",\n  \"GPA\": 1.39\n}",
+									"raw": "{\n    \"name\": \"Ethan Davis\"\n}",
 									"options": {
 										"raw": {
 											"headerFamily": "json",
@@ -198,26 +723,101 @@
 									"variable": [
 										{
 											"key": "sId",
-											"value": "1000",
-											"description": "(Required) "
+											"value": "998",
+											"description": "(Required) Student Id"
 										}
 									]
 								}
 							},
 							"response": [
 								{
-									"name": "Success",
+									"name": "200 OK - name",
 									"originalRequest": {
 										"method": "PATCH",
 										"header": [
 											{
 												"key": "Content-Type",
 												"value": "application/json"
+											},
+											{
+												"key": "If-Match",
+												"value": "AAAAAAAAE4o=",
+												"description": "(Required) Value from ETag Header returned on GET",
+												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"name\": \"string\",\n  \"GPA\": 1640.324251822569\n}",
+											"raw": "{\n  \"name\": \"Ethan Davies\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:8080/students/:sId",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "998",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:08:32 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sId\": 998,\n    \"name\": \"Ethan Davies\",\n    \"GPA\": 3.27\n}"
+								},
+								{
+									"name": "200 OK - GPA",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "If-Match",
+												"value": "AAAAAAABtYM=",
+												"description": "(Required) Value from ETag Header returned on GET",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"GPA\": 3.33\n}",
 											"options": {
 												"raw": {
 													"headerFamily": "json",
@@ -236,22 +836,324 @@
 											],
 											"variable": [
 												{
-													"key": "sId"
+													"key": "sId",
+													"value": "998",
+													"description": "(Required) Student Id"
 												}
 											]
 										}
 									},
 									"status": "OK",
 									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [],
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:15:06 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
 									"cookie": [],
-									"body": ""
+									"body": "{\n    \"sId\": 998,\n    \"name\": \"Ethan Davies\",\n    \"GPA\": 3.33\n}"
+								},
+								{
+									"name": "428 Precondition Required (Missing If-Match header) Copy",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Ethan Davies\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "998",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Precondition Required",
+									"code": 428,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:48:32 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": 428,\n    \"traceId\": \"00-d8b2ee33e0357ed85e11bd20f69342a9-34c669df6b42f6df-00\"\n}"
+								},
+								{
+									"name": "412 Precondition Failed (Bad If-Match header value)",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "If-Match",
+												"value": "BadValue",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Ethan Davies\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "998",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Precondition Failed",
+									"code": 412,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 03:50:45 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.13\",\n    \"title\": \"Precondition Failed\",\n    \"status\": 412,\n    \"traceId\": \"00-4e2807fa2a2b4c4d5df968ffae34a376-c211a8f385752ccb-00\"\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "If-Match",
+												"value": "AAAAAAABtYM=",
+												"description": "(Required) Value from ETag Header returned on GET",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": null\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "998",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:13:32 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"name\": [\n            \"The field name is invalid.\"\n        ]\n    },\n    \"traceId\": \"00-e71a5c29adffc8a39cff478825831ddc-fc97c6d599f6d356-00\"\n}"
+								},
+								{
+									"name": "404 Not Found",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "If-Match",
+												"value": "AAAAAAAAE4s=",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"Ethan Davies\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:03:37 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-e32495ae35acf4c960cf1c2cedec6cc5-df21f48db360a399-00\"\n}"
 								}
 							]
 						},
 						{
 							"name": "Delete Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
 								"header": [],
@@ -267,15 +1169,59 @@
 									"variable": [
 										{
 											"key": "sId",
-											"value": "1000",
-											"description": "(Required) "
+											"value": "2055",
+											"description": "(Required) Student Id"
 										}
 									]
 								}
 							},
 							"response": [
 								{
-									"name": "Success",
+									"name": "200 OK",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "localhost:8080/students/:sId",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "2055",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Length",
+											"value": "0"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:18:39 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										}
+									],
+									"cookie": [],
+									"body": null
+								},
+								{
+									"name": "409 Conflict",
 									"originalRequest": {
 										"method": "DELETE",
 										"header": [],
@@ -290,17 +1236,126 @@
 											],
 											"variable": [
 												{
-													"key": "sId"
+													"key": "sId",
+													"value": "2055",
+													"description": "(Required) Student Id"
 												}
 											]
 										}
 									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [],
+									"status": "Conflict",
+									"code": 409,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Length",
+											"value": "0"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:18:39 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										}
+									],
 									"cookie": [],
-									"body": ""
+									"body": null
+								},
+								{
+									"name": "404 Not Found",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:20:10 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-0a194774a20ccd053f6c6e12495effe5-3af43fcb5a020b0a-00\"\n}"
+								},
+								{
+									"name": "400 Bad Request",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "-1",
+													"description": "(Required) Student Id"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 13 Aug 2025 04:20:33 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"sId\": [\n            \"Integer should be positive\"\n        ]\n    },\n    \"traceId\": \"00-7ac534f723028bb911446c5b208afb01-50d74bbf81b53e09-00\"\n}"
 								}
 							]
 						}
@@ -308,6 +1363,32 @@
 				},
 				{
 					"name": "Add Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is a number above 1000\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    // The harri-schooldemosql-database image is prefilled with 1000 students\r",
+									"    pm.expect(responseData).to.be.a('number').and.to.be.above(1000);\r",
+									"    console.log(\"Student created: \" + responseData)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -338,14 +1419,10 @@
 					},
 					"response": [
 						{
-							"name": "Successful operation",
+							"name": "200 OK",
 							"originalRequest": {
 								"method": "POST",
 								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
 									{
 										"key": "Accept",
 										"value": "application/json"
@@ -353,7 +1430,62 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"string\",\n  \"GPA\": 1631.9917869355627\n}",
+									"raw": "{\n  \"name\": \"New Postman student\",\n  \"GPA\": 1.99\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8080/students",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"students"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 13 Aug 2025 04:46:52 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "7873"
+						},
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"GPA\": 1.9923\n}",
 									"options": {
 										"raw": {
 											"headerFamily": "json",
@@ -371,17 +1503,29 @@
 									]
 								}
 							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
 							"header": [
 								{
 									"key": "Content-Type",
-									"value": "application/json"
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 13 Aug 2025 04:48:05 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
 								}
 							],
 							"cookie": [],
-							"body": "3482"
+							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"GPA\": [\n            \"'GPA' must not be more than 3 digits in total, with allowance for 2 decimals. 5 digits and 4 decimals were found.\"\n        ],\n        \"name\": [\n            \"The name field is required.\"\n        ]\n    },\n    \"traceId\": \"00-06d6e05e21fb3d5c7585dc487c906604-76bf07b6d474eccb-00\"\n}"
 						}
 					]
 				},
@@ -443,32 +1587,38 @@
 							"query": [
 								{
 									"key": "sId",
-									"value": "10001",
+									"value": "1",
+									"description": "Loose search",
 									"disabled": true
 								},
 								{
 									"key": "name",
 									"value": "Ben",
+									"description": "Loose search",
 									"disabled": true
 								},
 								{
 									"key": "GPA.IsNull",
 									"value": "false",
+									"description": "Not compatible with other GPA parameters",
 									"disabled": true
 								},
 								{
 									"key": "GPA.Lt",
-									"value": "4",
+									"value": "3.52",
+									"description": "GPA.Lt and GPA.Gt are compatible with each other",
 									"disabled": true
 								},
 								{
 									"key": "GPA.Gt",
-									"value": "0",
+									"value": "2.51",
+									"description": "GPA.Lt and GPA.Gt are compatible with each other",
 									"disabled": true
 								},
 								{
 									"key": "GPA.Eq",
 									"value": "4",
+									"description": "Strict matching. Not compatible with other GPA parameters",
 									"disabled": true
 								},
 								{
@@ -508,10 +1658,11 @@
 									}
 								],
 								"url": {
-									"raw": "{{baseUrl}}/students",
+									"raw": "localhost:8080/students",
 									"host": [
-										"{{baseUrl}}"
+										"localhost"
 									],
+									"port": "8080",
 									"path": [
 										"students"
 									],
@@ -519,31 +1670,37 @@
 										{
 											"key": "sId",
 											"value": "1",
+											"description": "Loose search",
 											"disabled": true
 										},
 										{
 											"key": "name",
 											"value": "Ben",
+											"description": "Loose search",
 											"disabled": true
 										},
 										{
 											"key": "GPA.IsNull",
 											"value": "false",
+											"description": "Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Lt",
 											"value": "3.52",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Gt",
 											"value": "2.43",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Eq",
 											"value": "4",
+											"description": "Strict matching. Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
@@ -617,30 +1774,36 @@
 										{
 											"key": "sId",
 											"value": "1",
+											"description": "Loose search",
 											"disabled": true
 										},
 										{
 											"key": "name",
-											"value": "Ben"
+											"value": "Ben",
+											"description": "Loose search"
 										},
 										{
 											"key": "GPA.IsNull",
 											"value": "false",
+											"description": "Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Lt",
 											"value": "3.52",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Gt",
 											"value": "2.43",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Eq",
 											"value": "4",
+											"description": "Strict matching. Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
@@ -713,30 +1876,36 @@
 									"query": [
 										{
 											"key": "sId",
-											"value": "21"
+											"value": "21",
+											"description": "Loose search"
 										},
 										{
 											"key": "name",
-											"value": "Williams"
+											"value": "Williams",
+											"description": "Loose search"
 										},
 										{
 											"key": "GPA.IsNull",
 											"value": "false",
+											"description": "Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Lt",
 											"value": "3.52",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Gt",
 											"value": "2.43",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Eq",
 											"value": "4",
+											"description": "Strict matching. Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
@@ -809,29 +1978,35 @@
 										{
 											"key": "sId",
 											"value": "1",
+											"description": "Loose search",
 											"disabled": true
 										},
 										{
 											"key": "name",
-											"value": "smith"
+											"value": "smith",
+											"description": "Loose search"
 										},
 										{
 											"key": "GPA.IsNull",
-											"value": "false"
+											"value": "false",
+											"description": "Not compatible with other GPA parameters"
 										},
 										{
 											"key": "GPA.Lt",
 											"value": "4",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Gt",
 											"value": "0",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Eq",
 											"value": "4",
+											"description": "Strict matching. Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
@@ -901,30 +2076,36 @@
 										{
 											"key": "sId",
 											"value": "1",
+											"description": "Loose search",
 											"disabled": true
 										},
 										{
 											"key": "name",
-											"value": "Steve"
+											"value": "Steve",
+											"description": "Loose search"
 										},
 										{
 											"key": "GPA.IsNull",
 											"value": "false",
+											"description": "Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Lt",
 											"value": "4",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Gt",
 											"value": "0",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other",
 											"disabled": true
 										},
 										{
 											"key": "GPA.Eq",
 											"value": "4",
+											"description": "Strict matching. Not compatible with other GPA parameters",
 											"disabled": true
 										},
 										{
@@ -967,6 +2148,101 @@
 							],
 							"cookie": [],
 							"body": null
+						},
+						{
+							"name": "400 Bad Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/students?sId=-1&GPA.IsNull=0&GPA.Lt=-792281625142643375&GPA.Gt=nothing&GPA.Eq=79228162514264337593543950336&page=1.5&pageSize=2147483648&sortColumn=BADVALUE&orderBy=0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students"
+									],
+									"query": [
+										{
+											"key": "sId",
+											"value": "-1",
+											"description": "Loose search"
+										},
+										{
+											"key": "name",
+											"value": "Ben",
+											"description": "Loose search",
+											"disabled": true
+										},
+										{
+											"key": "GPA.IsNull",
+											"value": "0",
+											"description": "Not compatible with other GPA parameters"
+										},
+										{
+											"key": "GPA.Lt",
+											"value": "-792281625142643375",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other"
+										},
+										{
+											"key": "GPA.Gt",
+											"value": "nothing",
+											"description": "GPA.Lt and GPA.Gt are compatible with each other"
+										},
+										{
+											"key": "GPA.Eq",
+											"value": "79228162514264337593543950336",
+											"description": "Strict matching. Not compatible with other GPA parameters"
+										},
+										{
+											"key": "page",
+											"value": "1.5"
+										},
+										{
+											"key": "pageSize",
+											"value": "2147483648"
+										},
+										{
+											"key": "sortColumn",
+											"value": "BADVALUE",
+											"description": "'sId', 'name', or 'GPA'. Default sId"
+										},
+										{
+											"key": "orderBy",
+											"value": "0",
+											"description": "'ASC' or 'DESC'. Default ASC"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 13 Aug 2025 03:24:08 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"sId\": [\n            \"Integer should be positive\"\n        ],\n        \"page\": [\n            \"The value '1.5' is not valid.\"\n        ],\n        \"orderBy\": [\n            \"The value 'BADVALUE' is not valid.\"\n        ],\n        \"pageSize\": [\n            \"The value '2147483648' is not valid.\"\n        ],\n        \"sortColumn\": [\n            \"The field sortColumn is invalid.\"\n        ],\n        \"GPA.Eq\": [\n            \"The value '79228162514264337593543950336' is not valid for eq.\"\n        ],\n        \"GPA.Gt\": [\n            \"The value 'nothing' is not valid for gt.\"\n        ],\n        \"GPA.Lt\": [\n            \"Number should be positive\"\n        ],\n        \"GPA.IsNull\": [\n            \"The value '0' is not valid for isNull.\"\n        ]\n    },\n    \"traceId\": \"00-02a81a452764edd85af13713c051f055-b7f163b85768d3cd-00\"\n}"
 						}
 					]
 				}
@@ -1015,10 +2291,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/health",
+							"raw": "localhost:8080/health",
 							"host": [
-								"{{baseUrl}}"
+								"localhost"
 							],
+							"port": "8080",
 							"path": [
 								"health"
 							]
