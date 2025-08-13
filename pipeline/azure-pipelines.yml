@@ -90,6 +90,8 @@ stages:
           failTaskOnMissingResultsFile: true
           
 - stage: 'PostGithubCommitStatus'
+  variables: 
+    CommitIdForGitHub: $[coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'])]
   displayName: 'Github Commit Status'
   dependsOn:
   - 'RunPostmanAgainstContainer'
@@ -102,6 +104,7 @@ stages:
       - checkout: none
       - template: /pipeline/tasks/rest-github-commit-check.yml
         parameters:
+          commitid: $(CommitIdForGitHub)
           state: 'success'
           description: 'The build succeeded'
           path: 'HarrisonSlater/Harri.SchoolDemoAPI.Postman'
@@ -112,6 +115,7 @@ stages:
       - checkout: none
       - template: /pipeline/tasks/rest-github-commit-check.yml
         parameters:
+          commitid: $(CommitIdForGitHub)
           state: 'failure'
           description: 'The build failed'
           path: 'HarrisonSlater/Harri.SchoolDemoAPI.Postman'
