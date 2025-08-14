@@ -1,4 +1,4 @@
-# Harri.SchoolDemoAPI.Postman
+# Harri.SchoolDemoAPI.Postman Collection
 
 **Postman Collection & Newman Pipeline for the [Harri.SchoolDemoAPI REST API](https://github.com/HarrisonSlater/Harri.SchoolDemoAPI)**
 
