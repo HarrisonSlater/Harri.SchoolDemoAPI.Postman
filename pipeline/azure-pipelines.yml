@@ -73,7 +73,12 @@ stages:
           cd $(System.DefaultWorkingDirectory)/postman/collections
           newman run StudentDemoAPI.postman_collection.json --env-var "baseUrl=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code 
         displayName: Newman - run StudentDemoAPI.postman_collection.json
-      
+        
+      - script: |
+          cd newman-folder-runner
+          npm install
+        displayName: newman-folder-runner npm install
+
       - script: |
           chmod +x ./run.sh 
           ./run.sh "./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json"
