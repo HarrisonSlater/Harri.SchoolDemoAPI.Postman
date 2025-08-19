@@ -40,6 +40,73 @@ and run `npm install`
 
 All these scripts do is call the `node ./newman-folder-runner/newman-folder-runner.js` and pass through arguments
 
+### Command line expected output
+
+Expected output before the collection is run logs the values read from the provided folders-to-run.json, postman collection, and the data files in folders:
+```
+Collection folders to run:
+        GET - 200 OK,
+        GET - 404 Not Found,
+        GET - 400 Bad Request,
+        PUT - 200 OK,
+        PUT - 412 Precondition Failed,
+        PUT - 428 Precondition Required,
+        PUT - 404 Not Found,
+        PUT - 400 Bad Request
+Data files discovered: [
+  'PUT\\PUT - 428 Precondition Required\\ifMatchHeaders.csv',
+  'PUT\\PUT - 412 Precondition Failed\\ifMatchHeaders.csv',
+  'PUT\\PUT - 400 Bad Request\\badRequests.json',
+  'PUT\\PUT - 200 OK\\data.json',
+  'GET\\GET - 404 Not Found\\studentIds.csv',
+  'GET\\GET - 400 Bad Request\\studentIds.csv',
+  'GET\\GET - 200 OK\\studentIds.csv'
+]
+
+Folder to json/csv data file mapping:
+        {
+  "PUT\\PUT - 428 Precondition Required": [
+    "ifMatchHeaders.csv"
+  ],
+  "PUT\\PUT - 412 Precondition Failed": [
+    "ifMatchHeaders.csv"
+  ],
+  "PUT\\PUT - 400 Bad Request": [
+    "badRequests.json"
+  ],
+  "PUT\\PUT - 200 OK": [
+    "data.json"
+  ],
+  "GET\\GET - 404 Not Found": [
+    "studentIds.csv"
+  ],
+  "GET\\GET - 400 Bad Request": [
+    "studentIds.csv"
+  ],
+  "GET\\GET - 200 OK": [
+    "studentIds.csv"
+  ]
+}
+
+Running collection:  .\postman\collections\StudentDemoAPI - Students Tests - Data Driven.postman_collection.json
+```
+Then the newman run commands will be kicked off and as they complete will print out something like:
+
+```
+--- COLLECTION FOLDER RUN RESULTS ---
+
+Collection run for folder:  GET - 404 Not Found completed with status:  SUCCESS
+
+Collection run for folder:  GET - 200 OK completed with status:  SUCCESS
+
+Collection run for folder:  PUT - 428 Precondition Required completed with status:  SUCCESS
+
+Collection run for folder:  PUT - 412 Precondition Failed completed with status:  SUCCESS
+Collection run for folder:  PUT - 400 Bad Request completed with status:  SUCCESS
+
+Collection run for folder:  PUT - 200 OK completed with status:  SUCCESS
+```
+
 #### Folder And Collection Structure:
 Data files folder structure example: 
 ```
@@ -120,8 +187,22 @@ There is also the required folders-to-run.json:
 
 Which dictates which folders from the postman collection to actually run.
 
-																	
+### Test results
 
+Results after newman-folder-runner have been run are stored under the `newman-reports` folder like:
+```
+└───StudentDemoAPI - Students Tests - Data Driven.postman_collection
+    ├───GET
+    │       GET - 200 OK-studentIds.csv.results.xml
+    │       GET - 400 Bad Request-studentIds.csv.results.xml
+    │       GET - 404 Not Found-studentIds.csv.results.xml
+    │
+    └───PUT
+            PUT - 200 OK-data.json.results.xml
+            PUT - 400 Bad Request-badRequests.json.results.xml
+            PUT - 412 Precondition Failed-ifMatchHeaders.csv.results.xml
+            PUT - 428 Precondition Required-ifMatchHeaders.csv.results.xml
+```
 					   
 																		   
 																					  
