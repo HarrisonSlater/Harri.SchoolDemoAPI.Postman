@@ -75,9 +75,10 @@ stages:
         displayName: Newman - run StudentDemoAPI.postman_collection.json
       
       - script: |
+          chmod +x ./run.sh 
           ./run.sh "./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json"
         displayName: Newman - run all folders StudentDemoAPI - Students Tests - Data Driven.postman_collection.json
-        
+
       
       #> output-report.log
       
