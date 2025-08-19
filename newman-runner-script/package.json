@@ -1,0 +1,18 @@
+{
+  "name": "newman-runner-script",
+  "version": "1.0.0",
+  "description": "",
+  "exports": "./newman-runner-script.js",
+  "scripts": {
+    "test": "node newman-runner-script.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "chalk": "^5.6.0",
+    "glob": "^11.0.3",
+    "newman": "^6.2.1"
+  }
+}

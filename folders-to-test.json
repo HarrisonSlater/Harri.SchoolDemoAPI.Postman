@@ -1,0 +1,10 @@
+[
+    "GET - 200 OK",
+    "GET - 404 Not Found",
+    "GET - 400 Bad Request",
+    "PUT - 200 OK",
+    "PUT - 412 Precondition Failed",
+    "PUT - 428 Precondition Required",
+    "PUT - 404 Not Found",
+    "PUT - 400 Bad Request"
+]

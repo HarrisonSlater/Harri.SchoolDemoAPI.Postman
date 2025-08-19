@@ -1,0 +1,1 @@
+node ./newman-runner-script/newman-runner-script.js $@

@@ -1,0 +1,29 @@
+[
+	{
+		"PUTBody": {
+			
+		}
+	},
+	{
+		"PUTBody": {
+			"GPA": null
+		}
+	},
+	{
+		"PUTBody": {
+			"name": null
+		}
+	},
+	{
+		"PUTBody": {
+			"name": "valid name",
+			"GPA": 1234
+		}
+	},
+	{
+		"PUTBody": null
+	},
+	{
+		"PUTBody": ""
+	}
+]
