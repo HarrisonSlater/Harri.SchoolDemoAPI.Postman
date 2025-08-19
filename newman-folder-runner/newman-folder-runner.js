@@ -39,8 +39,8 @@ collection.item.array.forEach(item => {
 });
 */
 
-const foldersToTest = (await import('file://' + path.join(cwd, 'folders-to-test.json'), { with: { type: 'json' } })).default;
-console.log(chalk.white('\nCollection folders to test: '), chalk.greenBright.bold(`\n\t${foldersToTest.join(', \n\t')}`))
+const foldersToTest = (await import('file://' + path.join(cwd, 'folders-to-run.json'), { with: { type: 'json' } })).default;
+console.log(chalk.white('\nCollection folders to run: '), chalk.greenBright.bold(`\n\t${foldersToTest.join(', \n\t')}`))
 
 
 //const results = await glob(["**/*.{json,csv}"], { cwd: iterationDataPath })
@@ -78,7 +78,7 @@ for (const folderName in folderDataFileMapping) {
     // performa a newman run per data file in each folder
     for (const dataFileName of dataFileNames) {
 
-        const junitExportFilePath = `./newman-reports/${parsedCollectionFilePath.name}-${folderName}-${dataFileName}.html`
+        const junitExportFilePath = `./newman-reports/${parsedCollectionFilePath.name}-${folderName}-${dataFileName}.results.xml`
 
         console.log(chalk.white(`\nRunning folder: `), chalk.blueBright.bold(folderName), chalk.white(`with data file: `), chalk.greenBright.bold(dataFileName), chalk.white(`and junit report export path: `), chalk.yellowBright.bold(junitExportFilePath));
         newman.run({
