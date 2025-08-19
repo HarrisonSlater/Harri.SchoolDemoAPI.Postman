@@ -1,1 +1,1 @@
-node ./newman-runner-script/newman-runner-script.js $@
+node ./newman-folder-runner/newman-folder-runner.js "$@"

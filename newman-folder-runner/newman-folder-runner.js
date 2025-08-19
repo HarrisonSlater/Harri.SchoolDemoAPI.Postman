@@ -1,10 +1,8 @@
+#!/usr/bin/env node
 import chalk from 'chalk';
 import newman from 'newman';
 import path from 'path';
-import { glob, globSync, globStream, globStreamSync} from 'glob'
-//import pkg from 'glob';
-//const { glob } = pkg;
-//import {readdir} from 'fs/promises';
+import { glob } from 'glob'
 
 const collectionPath = process.argv[2]
 if (collectionPath === undefined) {
@@ -71,40 +69,52 @@ console.log(chalk.white('\nRunning collection: '), chalk.cyanBright.bold(collect
 // iterate folderDataFileMapping and run newman for each folder and data file combination
 // iterationDataPath is the base path for the data folders and files
 for (const folderName in folderDataFileMapping) {
-    const dataFileName = folderDataFileMapping[folderName];
+    const dataFileNames = folderDataFileMapping[folderName];
     const parsedFolderName = path.parse(folderName);
     //console.log(parsedFolderName)
 
-    const junitExportFilePath = `./newman-reports/${parsedCollectionFilePath.name}-${folderName}-${dataFileName}.html`
-
-    console.log(chalk.white(`\nRunning folder: `), chalk.blueBright.bold(folderName), chalk.white(`with data file: `), chalk.greenBright.bold(dataFileName), chalk.white(`and junit report export path: `), chalk.yellowBright.bold(junitExportFilePath));
 
 
-    //console.debug(JSON.parse(collection));
-    newman.run({
-        collection: collection,
-        reporters: ['junit'], //cli doesn't work properly here because of paralel execution
-        environment: environmentFilePath,
-        iterationData: path.join(iterationDataFullPath, folderName, dataFileName[0]), //TODO: support multiple data files per folder
-        folder: parsedFolderName.base,
-        reporter: {
-            junit: {
-                html: true,
-                export: junitExportFilePath  
+    // performa a newman run per data file in each folder
+    for (const dataFileName of dataFileNames) {
+
+        const junitExportFilePath = `./newman-reports/${parsedCollectionFilePath.name}-${folderName}-${dataFileName}.html`
+
+        console.log(chalk.white(`\nRunning folder: `), chalk.blueBright.bold(folderName), chalk.white(`with data file: `), chalk.greenBright.bold(dataFileName), chalk.white(`and junit report export path: `), chalk.yellowBright.bold(junitExportFilePath));
+        newman.run({
+            collection: collection,
+            reporters: ['junit'], //cli doesn't work properly here because of paralel execution
+            environment: environmentFilePath,
+            iterationData: path.join(iterationDataFullPath, folderName, dataFileName),
+            folder: parsedFolderName.base,
+            reporter: {
+                junit: {
+                    html: false,
+                    export: junitExportFilePath  
+                }
             }
-        }
-    }, (err, summary) => {
-        if (err) {
-            console.log(err)
-            throw err
-        }
+        }, (err, summary) => {
+            if (err) {
+                console.Error(chalk.red(err))
+                throw err
+            }
 
-        console.log('\nCollection run for folder: ', chalk.greenBright(parsedFolderName.base), 'completed with status: ',
-            (summary.run.failures.length === 0 ? chalk.greenBright.bold('SUCCESS') : chalk.redBright('FAILURE')));
-    });
+            console.log('\nCollection run for folder: ', chalk.blueBright.bold(parsedFolderName.base), 'completed with status: ',
+                (summary.run.failures.length === 0 ? chalk.greenBright.bold('SUCCESS') : chalk.redBright('FAILURE')));
+        });
+    }
+
 }
+console.log(chalk.blue.bgWhite('\n--- COLLECTION FOLDER RUN RESULTS ---'))
 
 
+//TODO improvements for this script:
+// add async progress of newman runs especilly when there are failures and timeouts
+// html vs xml report export
+// add proper cli parameters
+// add newman parameter customisation / pass through
+// extend cli results output
+// add checking of folder structure against the postman collection folder structure before running
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))

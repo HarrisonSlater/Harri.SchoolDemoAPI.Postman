@@ -1,10 +1,13 @@
 {
-  "name": "newman-runner-script",
+  "name": "newman-folder-runner",
   "version": "1.0.0",
   "description": "",
-  "exports": "./newman-runner-script.js",
+  "exports": "./newman-folder-runner.js",
+  "bin": {
+	"newman-folder-runner": "./newman-folder-runner.js"
+  },
   "scripts": {
-    "test": "node newman-runner-script.js"
+    "test": "node newman-folder-runner.js"
   },
   "keywords": [],
   "author": "",
