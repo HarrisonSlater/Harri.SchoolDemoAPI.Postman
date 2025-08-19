@@ -96,6 +96,8 @@ console.log(chalk.blue.bgWhite('\n--- COLLECTION FOLDER RUN RESULTS ---'));
 // add async progress of newman runs especilly when there are failures and timeouts
 // html vs xml report export
 // add proper cli parameters (using commander package)
+    // make 'folders-to-run.json' a parameter
+    // make environemnt file a parameter
 // add newman parameter customisation / pass through
 // extend cli results output
 // add checking of folder structure against the postman collection folder structure before running
