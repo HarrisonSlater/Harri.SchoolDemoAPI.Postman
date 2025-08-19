@@ -6,14 +6,122 @@ This repository provides a Postman Collection alongside a Newman-based collectio
 
 ## Features
 
-* **Postman Collection**: Pre-configured requests for all key API endpoints
+* **Postman Collection**: Pre-configured requests for all key API endpoints.
+																										   
+																									  
 * **Automation-Ready**: Easily run the collection via Newman in CI pipelines, facilitating automated testing.
 
-## Quick Start
+## Quick Start (StudentDemoAPI.postman_collection.json)
 
-1. **Import** the Postman Collection into your Postman app.
-2. **Configure** your environment variables (`baseUrl`) or import the Local.postman_environment.json 
+1. **Import** the '/postman/collections/StudentDemoAPI.postman_collection.json' collection into your Postman app.
+2. **Configure** your environment variables (`baseUrl`) or import the Local.postman_environment.json.
 3. Use **Newman** to execute the collection programmatically or within a build pipeline.
+		  
   > `newman run StudentDemoAPI.postman_collection.json --env-var "baseUrl=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code`
+	  
+## Data Driven Collections (StudentDemoAPI - Students Tests - Data Driven.postman_collection.json)
+You can run the data driven postman collection manually in the Postman app or by writing a newman command.
 
+Iteration data files are found under **/postman/collections/iteration-data** and match the folder structure found in the collection
+
+### Automated Script For Data Driven Collections
+Using the included node script **newman-folder-runner** you can run a series of `newman run` commands against folders in a postman collection and auto include iteration data files found on the file system matching the same folder structure.
+
+### Setup
+Navigate to 
+> \newman-folder-runner
+and run `npm install`
+
+### Running on windows
+`./run '.\postman\collections\StudentDemoAPI - Students Tests - Data Driven.postman_collection.json'`
+
+### Running on linux
+`./run.sh "./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json"`
+
+All these scripts do is call the `node ./newman-folder-runner/newman-folder-runner.js` and pass through arguments
+
+#### Folder And Collection Structure:
+Data files folder structure example: 
+```
+└───iteration-data
+    └───Students
+        ├───GET
+        │   ├───GET - 200 OK
+        │   │       studentIds.csv
+        │   │
+        │   ├───GET - 400 Bad Request
+        │   │       studentIds.csv
+        |   |       studentIds_2.csv
+        │   │
+        │   └───GET - 404 Not Found
+        │           studentIds.csv
+        │
+        └───PUT
+            ├───PUT - 200 OK
+            │       data1.json
+            │       data2.json
+            │       data3.json
+            │       data4.json
+            │
+            ├───PUT - 400 Bad Request
+            │       badRequests.json
+            │
+            ├───PUT - 412 Precondition Failed
+            │       ifMatchHeaders.csv
+            │
+            └───PUT - 428 Precondition Required
+                    ifMatchHeaders.csv
+```
+
+Postman collection matching folder structure:
+```
+└───Postman Collection
+    └───Students
+        ├───GET
+        │   ├───GET - 200 OK
+        │   │       GET Student request
+        │   │
+        │   ├───GET - 400 Bad Request
+        │   │       GET Student request
+        │   │
+        │   └───GET - 404 Not Found
+        │           GET Student request
+```
+Complex structure:
+```
+        └───PUT
+            └───PUT - 200 OK 
+                ├───Setup
+                |    POST Create auth token
+                |    POST Create student to update
+                |    GET Get student ETag
+                ├───Test
+                |    PUT Update existing student name
+                |    GET Assert student updated
+                └───Cleanup
+                     DEL Delete created student
+
+```
 ---
+
+There is also the required folders-to-run.json:
+```
+[
+    "GET - 200 OK",
+    "GET - 404 Not Found",
+    "GET - 400 Bad Request",
+    "PUT - 200 OK",
+    "PUT - 412 Precondition Failed",
+    "PUT - 428 Precondition Required",
+    "PUT - 404 Not Found",
+    "PUT - 400 Bad Request"
+]
+```
+
+Which dictates which folders from the postman collection to actually run.
+
+																	
+
+					   
+																		   
+																					  
