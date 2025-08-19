@@ -72,6 +72,12 @@ stages:
       - script: |
           cd $(System.DefaultWorkingDirectory)/postman/collections
           newman run StudentDemoAPI.postman_collection.json --env-var "baseUrl=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code 
+        displayName: Newman - run StudentDemoAPI.postman_collection.json
+      
+      - script: |
+          ./run.sh "./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json"
+        displayName: Newman - run all folders StudentDemoAPI - Students Tests - Data Driven.postman_collection.json
+        
       
       #> output-report.log
       
