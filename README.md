@@ -2,177 +2,147 @@
 
 **Postman Collection & Newman Pipeline for the [Harri.SchoolDemoAPI REST API](https://github.com/HarrisonSlater/Harri.SchoolDemoAPI)**
 
-This repository provides a Postman Collection alongside a Newman-based collection runner setup to streamline automated postman API testing for the `Harri.SchoolDemoAPI` project (a .NET 8-based CRUD REST API).
+This repository provides a Postman Collection alongside a Newman-based collection runner setup to streamline automated Postman API testing for the `Harri.SchoolDemoAPI` project (a .NET 8-based CRUD REST API).
 
 ## Features
 
-* **Postman Collection**: Pre-configured requests for all key API endpoints.
-																										   
-																									  
-* **Automation-Ready**: Easily run the collection via Newman in CI pipelines, facilitating automated testing.
+- **Standard Postman Collection**: Pre-configured requests for all key API endpoints.
+- **Data Driven Postman Collection**: Extensive data driven tests for each API endpoint.
+- **Newman Folder Runner**: Node script to run the above data driven collection, and similarly structure collections
+- **Automation-Ready**: Easily run all provided collections via Newman in CI pipelines, facilitating automated testing.
 
-## Quick Start (StudentDemoAPI.postman_collection.json)
+## Quick Start (`StudentDemoAPI.postman_collection.json`)
 
-1. **Import** the '/postman/collections/StudentDemoAPI.postman_collection.json' collection into your Postman app.
-2. **Configure** your environment variables (`baseUrl`) or import the Local.postman_environment.json.
-3. Use **Newman** to execute the collection programmatically or within a build pipeline.
-		  
-  > `newman run StudentDemoAPI.postman_collection.json --env-var "baseUrl=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code`
-	  
-## Data Driven Collections (StudentDemoAPI - Students Tests - Data Driven.postman_collection.json)
-You can run the data driven postman collection manually in the Postman app or by writing a newman command.
+1. **Import** the collection:  
+   `postman/collections/StudentDemoAPI.postman_collection.json` into your Postman app.
+2. **Configure** your environment variables (`baseUrl`), or import `Local.postman_environment.json`.
+3. **Run with Newman** (example command):  
+   ```bash
+   newman run StudentDemoAPI.postman_collection.json --env-var "baseUrl=localhost:8080" --reporters "cli,junit" --reporter-junit-export results.xml --suppress-exit-code
+   ```
 
-Iteration data files are found under **/postman/collections/iteration-data** and match the folder structure found in the collection
+---
 
-### Automated Script For Data Driven Collections
-Using the included node script **newman-folder-runner** you can run a series of `newman run` commands against folders in a postman collection and auto include iteration data files found on the file system matching the same folder structure.
+## Data Driven Collections
 
-### Setup
-Navigate to 
-> \newman-folder-runner
-and run `npm install`
+To explore an advanced data-driven testing collection, use:  
+`StudentDemoAPI - Students Tests - Data Driven.postman_collection.json`
 
-### Running on windows
-`./run '.\postman\collections\StudentDemoAPI - Students Tests - Data Driven.postman_collection.json'`
+Iteration data files are found under `/postman/collections/iteration-data`, matching the folder structure found in the collection.
 
-### Running on linux
-`./run.sh "./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json"`
+### Automated Script for Data Driven Collections
 
-All these scripts do is call the `node ./newman-folder-runner/newman-folder-runner.js` and pass through arguments
+Using the included Node.js script **newman-folder-runner**, you can run a series of `newman run` commands against folders in a Postman collection and automatically include iteration data files matching the folder structure.
 
-### Command line expected output
+#### Prerequisites
 
-Expected output before the collection is run logs the values read from the provided folders-to-run.json, postman collection, and the data files in folders:
+- **Node.js** and **npm** installed.
+
+#### Setup
+
+Navigate to the `newman-folder-runner` directory and run:
+```bash
+npm install
+```
+
+#### Running
+
+- **On Windows:**
+  ```bash
+  ./run '.\postman\collections\StudentDemoAPI - Students Tests - Data Driven.postman_collection.json'
+  ```
+- **On Linux:**
+  ```bash
+  ./run.sh "./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json"
+  ```
+
+These scripts call the underlying Node.js script:  
+`node ./newman-folder-runner/newman-folder-runner.js` and pass through arguments.
+
+---
+
+### Command Line Expected Output
+
+On start, the script logs values read from `folders-to-run.json`, the Postman collection, and the data files:
+
 ```
 Collection folders to run:
-        GET - 200 OK,
-        GET - 404 Not Found,
-        GET - 400 Bad Request,
-        PUT - 200 OK,
-        PUT - 412 Precondition Failed,
-        PUT - 428 Precondition Required,
-        PUT - 404 Not Found,
-        PUT - 400 Bad Request
-Data files discovered: [
-  'PUT\\PUT - 428 Precondition Required\\ifMatchHeaders.csv',
-  'PUT\\PUT - 412 Precondition Failed\\ifMatchHeaders.csv',
-  'PUT\\PUT - 400 Bad Request\\badRequests.json',
-  'PUT\\PUT - 200 OK\\data.json',
-  'GET\\GET - 404 Not Found\\studentIds.csv',
-  'GET\\GET - 400 Bad Request\\studentIds.csv',
-  'GET\\GET - 200 OK\\studentIds.csv'
-]
-
-Folder to json/csv data file mapping:
-        {
-  "PUT\\PUT - 428 Precondition Required": [
-    "ifMatchHeaders.csv"
-  ],
-  "PUT\\PUT - 412 Precondition Failed": [
-    "ifMatchHeaders.csv"
-  ],
-  "PUT\\PUT - 400 Bad Request": [
-    "badRequests.json"
-  ],
-  "PUT\\PUT - 200 OK": [
-    "data.json"
-  ],
-  "GET\\GET - 404 Not Found": [
-    "studentIds.csv"
-  ],
-  "GET\\GET - 400 Bad Request": [
-    "studentIds.csv"
-  ],
-  "GET\\GET - 200 OK": [
-    "studentIds.csv"
-  ]
-}
-
-Running collection:  .\postman\collections\StudentDemoAPI - Students Tests - Data Driven.postman_collection.json
+    GET - 200 OK,
+    GET - 404 Not Found,
+    ...
+Data files discovered: [ ... ]
+Folder to json/csv data file mapping: { ... }
+Running collection: ./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json
 ```
-Then the newman run commands will be kicked off and as they complete will print out something like:
 
+As Newman runs complete, status is shown for each folder:
 ```
 --- COLLECTION FOLDER RUN RESULTS ---
-
 Collection run for folder:  GET - 404 Not Found completed with status:  SUCCESS
-
-Collection run for folder:  GET - 200 OK completed with status:  SUCCESS
-
-Collection run for folder:  PUT - 428 Precondition Required completed with status:  SUCCESS
-
-Collection run for folder:  PUT - 412 Precondition Failed completed with status:  SUCCESS
-Collection run for folder:  PUT - 400 Bad Request completed with status:  SUCCESS
-
-Collection run for folder:  PUT - 200 OK completed with status:  SUCCESS
+...
 ```
 
-#### Folder And Collection Structure:
-Data files folder structure example: 
+---
+
+### Folder and Collection Structure
+
+**Data files folder structure example:**
 ```
 └───iteration-data
     └───Students
         ├───GET
         │   ├───GET - 200 OK
         │   │       studentIds.csv
-        │   │
         │   ├───GET - 400 Bad Request
         │   │       studentIds.csv
-        |   |       studentIds_2.csv
-        │   │
         │   └───GET - 404 Not Found
         │           studentIds.csv
-        │
         └───PUT
             ├───PUT - 200 OK
             │       data1.json
-            │       data2.json
-            │       data3.json
-            │       data4.json
-            │
             ├───PUT - 400 Bad Request
             │       badRequests.json
-            │
             ├───PUT - 412 Precondition Failed
             │       ifMatchHeaders.csv
-            │
             └───PUT - 428 Precondition Required
                     ifMatchHeaders.csv
 ```
 
-Postman collection matching folder structure:
+**Matching folder structure in Postman collection:**
 ```
 └───Postman Collection
     └───Students
         ├───GET
         │   ├───GET - 200 OK
         │   │       GET Student request
-        │   │
         │   ├───GET - 400 Bad Request
         │   │       GET Student request
-        │   │
         │   └───GET - 404 Not Found
         │           GET Student request
 ```
-Complex structure:
-```
-        └───PUT
-            └───PUT - 200 OK 
-                ├───Setup
-                |    POST Create auth token
-                |    POST Create student to update
-                |    GET Get student ETag
-                ├───Test
-                |    PUT Update existing student name
-                |    GET Assert student updated
-                └───Cleanup
-                     DEL Delete created student
 
+**Complex structure example:**
 ```
+└───PUT
+    └───PUT - 200 OK 
+        ├───Setup
+        |    POST Create auth token
+        |    POST Create student to update
+        |    GET Get student ETag
+        ├───Test
+        |    PUT Update existing student name
+        |    GET Assert student updated
+        └───Cleanup
+             DEL Delete created student
+```
+
 ---
 
-There is also the required folders-to-run.json:
-```
+### `folders-to-run.json`
+
+This file dictates which folders from the Postman collection to actually run. Example:
+
+```json
 [
     "GET - 200 OK",
     "GET - 404 Not Found",
@@ -185,24 +155,18 @@ There is also the required folders-to-run.json:
 ]
 ```
 
-Which dictates which folders from the postman collection to actually run.
+---
 
-### Test results
+### Test Results
 
-Results after newman-folder-runner have been run are stored under the `newman-reports` folder like:
+Results after `newman-folder-runner` runs are stored under the `newman-reports` folder:
+
 ```
 └───StudentDemoAPI - Students Tests - Data Driven.postman_collection
     ├───GET
     │       GET - 200 OK-studentIds.csv.results.xml
-    │       GET - 400 Bad Request-studentIds.csv.results.xml
-    │       GET - 404 Not Found-studentIds.csv.results.xml
-    │
+    │       ...
     └───PUT
             PUT - 200 OK-data.json.results.xml
-            PUT - 400 Bad Request-badRequests.json.results.xml
-            PUT - 412 Precondition Failed-ifMatchHeaders.csv.results.xml
-            PUT - 428 Precondition Required-ifMatchHeaders.csv.results.xml
+            ...
 ```
-					   
-																		   
-																					  
