@@ -4,7 +4,7 @@ import newman from 'newman';
 import path from 'path';
 import { glob } from 'glob';
 import fs from 'fs';
-import {successString, failureString} from './text-helper.js';
+import {successString, failureString, truncateString} from './text-helper.js';
 
 const collectionPath = process.argv[2]
 if (collectionPath === undefined) {
@@ -64,27 +64,59 @@ for (const folderPath in folderDataFileMapping) {
         
         const newmanPromise = newmanRun(config)
         newmanPromise.then(function(summary) {
-            allNewmanSummaries.push(summary);
+            allNewmanSummaries.push({folderName, summary});
+
+            const statusString = (summary.run.failures.length === 0 ? chalk.greenBright.bold('SUCCESS') : chalk.redBright('FAILURE'));
+            console.log(chalk.whiteBright(`\nSummary for folder: `), chalk.blueBright.bold(folderName), 'completed with status: ', statusString);
+
+            console.log(chalk.whiteBright('Run stats:'));
+            console.table(summary.run.stats)
+
+            console.log(chalk.whiteBright('Run timings:'));
+            console.table(getSummaryTimings(summary));
+
+            if (summary.run.failures.length > 0) {
+                console.log(chalk.redBright('Run failures:'));
+                console.table(summary.run.failures)
+            }
+
+            //console.log(chalk.whiteBright('Run executions:'));
+            //console.debug(summary.run.executions)
         });
         allNewmanPromises.push(newmanPromise);
     }
 }
 
 // await all newman promises and handle results
-console.log(chalk.blue.bgWhite('\n--- COLLECTION FOLDER RUN RESULTS ---'));
+console.log(chalk.blue.bgWhite('\n--- INDIVIDUAL FOLDER RUN RESULTS ---'));
 await Promise.all(allNewmanPromises).then(() => {
-    logSummaries(allNewmanSummaries);
+    writeSummariesToLogFile(allNewmanSummaries);
+
+    const folderResultsSummaryHeaderString = `\n--- FOLDER RESULTS SUMMARY ---`
+    const folderResultsSummary = [] 
+
+    allNewmanSummaries.forEach((summary, index) => {
+        const folderName = summary.folderName;
+        const statusString = (summary.summary.run.failures.length === 0 ? chalk.greenBright.bold('SUCCESS') : chalk.redBright('FAILURE'));
+
+
+        const truncatedFolderName = truncateString(folderName, 60).padEnd(60, ' ');
+        console.log(chalk.whiteBright(`\nFolder: `), chalk.blueBright.bold(truncatedFolderName), ' status: ', statusString);
+    });
+
+    console.log(chalk.blue.bgWhite(folderResultsSummaryHeaderString))
+
 
     const overallResultHeaderString = `--- OVERALL RESULT FOR COLLECTION ---`
-    const allSummaryFailures = allNewmanSummaries.reduce((acc, summary) => acc + summary.run.failures.length, 0);
+    const allSummaryFailures = allNewmanSummaries.reduce((acc, summary) => acc + summary.summary.run.failures.length, 0);
     if (allSummaryFailures === 0) {
-        console.log(chalk.greenBright.bold());
         console.log(chalk.greenBright(overallResultHeaderString, successString));
     }
     else {
         console.error(chalk.redBright(overallResultHeaderString, failureString));
     }
 });
+
 
 function createNewmanConfig(collection, environmentFilePath, folderPath, dataFileName, junitExportFilePath) {
     const parsedFolderName = path.parse(folderPath);
@@ -111,14 +143,6 @@ async function newmanRun(config) {
                 throw err;
             }
 
-            const parsedFolderName = path.parse(config.folder);
-            console.log('\nCollection run for folder: ', 
-                chalk.blueBright.bold(parsedFolderName.base), 
-                'completed with status: ',
-                (summary.run.failures.length === 0 
-                    ? chalk.greenBright.bold('SUCCESS') 
-                    : chalk.redBright('FAILURE'))
-            );
 
             resolve(summary);
         });
@@ -139,11 +163,11 @@ function groupDataFilesByFolder(dataFiles) {
     return folderDataFileMapping;
 }
 
-function logSummaries(summaries) {
+function writeSummariesToLogFile(summaries) {
     // Write all summaries to a file
     try {
         summaries.forEach((summary, index) => {
-            delete summary.collection; //Don't log collection
+            delete summary.summary.collection; //Don't log collection
         });
         const currentDateString = new Date(Date.now()).toISOString().replace(/(:|\.)/g, '-');
         const logFileName = path.join(cwd, reportsFolderName, "logs", currentDateString + ".json");
@@ -158,6 +182,17 @@ function logSummaries(summaries) {
     }
 }
 
+function getSummaryTimings(summary) {
+    return {
+        responseAverage: summary.run.timings.responseAverage,
+        responseMin: summary.run.timings.responseMin,
+        responseMax: summary.run.timings.responseMax,
+        responseSd: summary.run.timings.responseSd,
+        started: summary.run.timings.started,
+        //completed: summary.run.timings.completed,
+        totalNewmanRunMs: summary.run.timings.completed - summary.run.timings.started,
+    };
+}
 //TODO improvements for this script:
 // add async progress of newman runs especilly when there are failures and timeouts
 // html vs xml report export
