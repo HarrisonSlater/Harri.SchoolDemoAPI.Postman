@@ -22,23 +22,22 @@ const environmentFilePath = path.join(cwd, parsedCollectionFilePath.dir, environ
 
 const iterationDataFullPath = path.join(cwd, '/postman/collections/iteration-data/Students/');
 
+// TODO make this json optional
 const foldersToTest = (await import('file://' + path.join(cwd, 'folders-to-run.json'), { with: { type: 'json' } })).default;
 console.log(chalk.white('\nCollection folders to run: '), chalk.greenBright.bold(`\n\t${foldersToTest.join(', \n\t')}`));
-
 
 const dataFiles = await glob('**/*.{json,csv}', { cwd: iterationDataFullPath, nodir: true });
 console.log("Data files discovered:",  dataFiles);
 
-const folderDataFileMapping = groupDataFilesByFolder(dataFiles);
-console.log(chalk.white('\nFolder to json/csv data file mapping: '), chalk.greenBright.bold(`\n\t${JSON.stringify(folderDataFileMapping, null, 2)}`));
+const matchingFolderDataFileMappings = getMatchingFolderDataFileMappings(dataFiles, foldersToTest);
 
 console.log(chalk.white('\nRunning collection: '), chalk.cyanBright.bold(collectionPath));
 const allNewmanPromises = [];
 const allNewmanSummaries = [];
 
-// iterate folderDataFileMapping and run newman for each folder and data file combination
-for (const folderPath in folderDataFileMapping) {
-    const dataFileNames = folderDataFileMapping[folderPath];
+// iterate matchingFolderDataFileMappings nd run newman for each folder and data file combination
+for (const folderPath in matchingFolderDataFileMappings) {
+    const dataFileNames = matchingFolderDataFileMappings[folderPath];
     
     for (const dataFileName of dataFileNames) {
         const parsedFolderPath = path.parse(folderPath);
@@ -93,19 +92,17 @@ await Promise.all(allNewmanPromises).then(() => {
     writeSummariesToLogFile(allNewmanSummaries);
 
     const folderResultsSummaryHeaderString = `\n--- FOLDER RESULTS SUMMARY ---`
-    const folderResultsSummary = [] 
+    console.log(chalk.blue.bgWhite(folderResultsSummaryHeaderString))
+    console.log('\n', chalk.white('Total folders run: '), chalk.whiteBright.bold(allNewmanSummaries.length));
 
     allNewmanSummaries.forEach((summary, index) => {
         const folderName = summary.folderName;
         const statusString = (summary.summary.run.failures.length === 0 ? chalk.greenBright.bold('SUCCESS') : chalk.redBright('FAILURE'));
 
-
         const truncatedFolderName = truncateString(folderName, 60).padEnd(60, ' ');
         console.log(chalk.whiteBright(`\nFolder: `), chalk.blueBright.bold(truncatedFolderName), ' status: ', statusString);
     });
-
-    console.log(chalk.blue.bgWhite(folderResultsSummaryHeaderString))
-
+    console.log('');
 
     const overallResultHeaderString = `--- OVERALL RESULT FOR COLLECTION ---`
     const allSummaryFailures = allNewmanSummaries.reduce((acc, summary) => acc + summary.summary.run.failures.length, 0);
@@ -117,6 +114,41 @@ await Promise.all(allNewmanPromises).then(() => {
     }
 });
 
+function getMatchingFolderDataFileMappings(dataFiles, foldersToTest) {
+    const folderDataFileMapping = groupDataFilesByFolder(dataFiles);
+    console.log(chalk.white('\nFolder to json/csv data file all discovered mappings: '), chalk.grey.bold(`\n\t${JSON.stringify(folderDataFileMapping, null, 2)}`));
+
+    const matchingFolderDataFileMappings = Object.entries(folderDataFileMapping).filter(([folderPath, dataFile]) => {
+        const parsedFolderPath = path.parse(folderPath);
+        return foldersToTest.includes(parsedFolderPath.base);
+    });
+
+    const foundFileDirectories = (Object.keys(folderDataFileMapping).map(folderPath => path.parse(folderPath).base));
+    const missingDataFiles = foldersToTest.filter(folder => {
+        const parsedFolderPath = path.parse(folder);
+
+        return foundFileDirectories.includes(parsedFolderPath.base) === false;
+    });
+
+    if (missingDataFiles.length > 0) {
+        console.error(chalk.redBright('\nERROR: Folders to run missing iteration data file/folder'), chalk.yellowBright.bold(`\n\t${missingDataFiles.join(', \n\t')}`));
+        throw new Error(chalk.redBright('\nFolders to run missing iteration data file/folder on system at path: ', iterationDataFullPath));
+    }
+
+    // data files that exist but will not be run because the folder is not in foldersToTest
+    const notMatchingFolderDataFileMappings = Object.entries(folderDataFileMapping).filter(([folderPath, dataFile]) => {
+        const parsedFolderPath = path.parse(folderPath);
+        return foldersToTest.includes(parsedFolderPath.base) === false;
+    });
+
+
+    console.log(chalk.white('\nFolders to run with data files: '), chalk.greenBright.bold(`\n\t${matchingFolderDataFileMappings.join(', \n\t')}`));
+    if (notMatchingFolderDataFileMappings.length > 0) {
+        console.warn(chalk.yellow('\nFolders excluded from run with data files: '), chalk.yellowBright.bold(`\n\t${notMatchingFolderDataFileMappings.join(', \n\t')}`));
+    }
+
+    return Object.fromEntries(matchingFolderDataFileMappings);
+}
 
 function createNewmanConfig(collection, environmentFilePath, folderPath, dataFileName, junitExportFilePath) {
     const parsedFolderName = path.parse(folderPath);
@@ -201,7 +233,7 @@ function getSummaryTimings(summary) {
     // make environemnt file a parameter
 // add newman parameter customisation / pass through
 // extend cli results output
-// add checking of folder structure against the postman collection folder structure before running
+// add log for postman collection folders not run
 // configurable concurrency
 
 

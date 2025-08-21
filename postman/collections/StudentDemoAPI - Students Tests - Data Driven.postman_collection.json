@@ -1167,7 +1167,7 @@
 									"variable": [
 										{
 											"key": "sId",
-											"value": "10001"
+											"value": "{{studentId}}"
 										}
 									]
 								}
