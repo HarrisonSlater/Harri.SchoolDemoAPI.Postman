@@ -62,7 +62,8 @@ for (const folderPath in folderDataFileMapping) {
             junitExportFilePath
         );
         
-        const newmanPromise = newmanRun(config, function(summary) {
+        const newmanPromise = newmanRun(config)
+        newmanPromise.then(function(summary) {
             allNewmanSummaries.push(summary);
         });
         allNewmanPromises.push(newmanPromise);
@@ -102,7 +103,7 @@ function createNewmanConfig(collection, environmentFilePath, folderPath, dataFil
     };
 }
 
-async function newmanRun(config, callback) {
+async function newmanRun(config) {
     return new Promise((resolve) => {
         newman.run(config, (err, summary) => {
             if (err) {
@@ -120,7 +121,6 @@ async function newmanRun(config, callback) {
             );
 
             resolve(summary);
-            callback(summary);
         });
     });
 }
@@ -143,7 +143,7 @@ function logSummaries(summaries) {
     // Write all summaries to a file
     try {
         summaries.forEach((summary, index) => {
-            delete summary.collection;
+            delete summary.collection; //Don't log collection
         });
         const currentDateString = new Date(Date.now()).toISOString().replace(/(:|\.)/g, '-');
         const logFileName = path.join(cwd, reportsFolderName, "logs", currentDateString + ".json");
