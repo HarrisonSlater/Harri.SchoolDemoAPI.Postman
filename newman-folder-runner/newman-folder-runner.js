@@ -35,53 +35,41 @@ console.log(chalk.white('\nFolder to json/csv data file mapping: '), chalk.green
 console.log(chalk.white('\nRunning collection: '), chalk.cyanBright.bold(collectionPath));
 const allNewmanPromises = [];
 const allNewmanSummaries = [];
+
 // iterate folderDataFileMapping and run newman for each folder and data file combination
-// iterationDataPath is the base path for the data folders and files
 for (const folderPath in folderDataFileMapping) {
     const dataFileNames = folderDataFileMapping[folderPath];
-    const parsedFolderName = path.parse(folderPath);
-
-    // performa a newman run per data file in each folder
+    
     for (const dataFileName of dataFileNames) {
-
         const parsedFolderPath = path.parse(folderPath);
         const folderName = parsedFolderPath.base;
-
+        
         const junitExportFilePath = `./${reportsFolderName}/${parsedCollectionFilePath.name}/${parsedFolderPath.dir}/${folderName}-${dataFileName}.results.xml`;
 
-        console.log(chalk.white(`\nRunning folder: `), chalk.blueBright.bold(folderPath), chalk.white(`with data file: `), chalk.greenBright.bold(dataFileName), chalk.white(`and junit report export path: `), chalk.yellowBright.bold(junitExportFilePath));
+        console.log(chalk.white(`\nRunning folder: `), 
+            chalk.blueBright.bold(folderPath), 
+            chalk.white(`with data file: `), 
+            chalk.greenBright.bold(dataFileName), 
+            chalk.white(`and junit report export path: `), 
+            chalk.yellowBright.bold(junitExportFilePath)
+        );
 
-        var newmanPromise = new Promise(resolve => {
-            newman.run({
-                collection: collection,
-                reporters: ['junit'], //cli doesn't work properly here because of paralel execution
-                environment: environmentFilePath,
-                iterationData: path.join(iterationDataFullPath, folderPath, dataFileName),
-                folder: parsedFolderName.base,
-                reporter: {
-                    junit: {
-                        html: false,
-                        export: junitExportFilePath  
-                    }
-                }
-            }, (err, summary) => {
-                if (err) {
-                    console.error(chalk.red(err));
-                    throw err;
-                }
-
-                console.log('\nCollection run for folder: ', chalk.blueBright.bold(parsedFolderName.base), 'completed with status: ',
-                    (summary.run.failures.length === 0 ? chalk.greenBright.bold('SUCCESS') : chalk.redBright('FAILURE')));
-
-                allNewmanSummaries.push(summary);
-                resolve();
-            });
+        const config = createNewmanConfig(
+            collection,
+            environmentFilePath,
+            folderPath,
+            dataFileName,
+            junitExportFilePath
+        );
+        
+        const newmanPromise = newmanRun(config, function(summary) {
+            allNewmanSummaries.push(summary);
         });
         allNewmanPromises.push(newmanPromise);
     }
 }
 
-//await all newman promises and handle results
+// await all newman promises and handle results
 console.log(chalk.blue.bgWhite('\n--- COLLECTION FOLDER RUN RESULTS ---'));
 await Promise.all(allNewmanPromises).then(() => {
     logSummaries(allNewmanSummaries);
@@ -97,7 +85,46 @@ await Promise.all(allNewmanPromises).then(() => {
     }
 });
 
-//
+function createNewmanConfig(collection, environmentFilePath, folderPath, dataFileName, junitExportFilePath) {
+    const parsedFolderName = path.parse(folderPath);
+    return {
+        collection: collection,
+        reporters: ['junit'],
+        environment: environmentFilePath,
+        iterationData: path.join(iterationDataFullPath, folderPath, dataFileName),
+        folder: parsedFolderName.base,
+        reporter: {
+            junit: {
+                html: false,
+                export: junitExportFilePath
+            }
+        }
+    };
+}
+
+async function newmanRun(config, callback) {
+    return new Promise((resolve) => {
+        newman.run(config, (err, summary) => {
+            if (err) {
+                console.error(chalk.red(err));
+                throw err;
+            }
+
+            const parsedFolderName = path.parse(config.folder);
+            console.log('\nCollection run for folder: ', 
+                chalk.blueBright.bold(parsedFolderName.base), 
+                'completed with status: ',
+                (summary.run.failures.length === 0 
+                    ? chalk.greenBright.bold('SUCCESS') 
+                    : chalk.redBright('FAILURE'))
+            );
+
+            resolve(summary);
+            callback(summary);
+        });
+    });
+}
+
 function groupDataFilesByFolder(dataFiles) {
     const folderDataFileMapping = {};
     dataFiles.forEach(fileName => {
