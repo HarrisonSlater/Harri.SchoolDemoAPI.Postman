@@ -7,8 +7,8 @@ This repository provides a Postman Collection alongside a Newman-based collectio
 ## Features
 
 - **Standard Postman Collection**: Pre-configured requests for all key API endpoints.
-- **Data Driven Postman Collection**: Extensive data driven tests for each API endpoint.
-- **Newman Folder Runner**: Node script to run the above data driven collection, and similarly structure collections
+- **Data Driven Postman Collection**: Extensive data-driven tests for each API endpoint.
+- **Newman Folder Runner**: Node script to run the above data-driven collection and other collections with a similar folder structure.
 - **Automation-Ready**: Easily run all provided collections via Newman in CI pipelines, facilitating automated testing.
 
 ## Quick Start (`StudentDemoAPI.postman_collection.json`)
@@ -32,7 +32,7 @@ Iteration data files are found under `/postman/collections/iteration-data`, matc
 
 ### Automated Script for Data Driven Collections
 
-Using the included Node.js script **newman-folder-runner**, you can run a series of `newman run` commands against folders in a Postman collection and automatically include iteration data files matching the folder structure.
+Using the included Node.js script **newman-folder-runner**, you can run a series of `newman run` commands against folders in a Postman collection and automatically include iteration-data files that match the collection's folder structure.
 
 #### Prerequisites
 
@@ -75,7 +75,7 @@ Folder to json/csv data file mapping: { ... }
 Running collection: ./postman/collections/StudentDemoAPI - Students Tests - Data Driven.postman_collection.json
 ```
 
-As Newman runs complete, status is shown for each folder:
+As the Newman runs complete, the status for each folder is displayed:
 ```
 --- COLLECTION FOLDER RUN RESULTS ---
 Collection run for folder:  GET - 404 Not Found completed with status:  SUCCESS
