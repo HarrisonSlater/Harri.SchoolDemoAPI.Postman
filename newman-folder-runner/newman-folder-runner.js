@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import chalk from 'chalk';
 import newman from 'newman';
 import path from 'path';
@@ -13,8 +14,6 @@ if (collectionPath === undefined) {
 
 const cwd = process.cwd();
 const reportsFolderName = 'newman-reports';
-
-const collection = (await import('file://' + path.join(cwd, collectionPath), { with: { type: 'json' } })).default;
 const parsedCollectionFilePath = path.parse(collectionPath);
 
 const environmentFileName = 'Local.postman_environment.json';
@@ -22,8 +21,10 @@ const environmentFilePath = path.join(cwd, parsedCollectionFilePath.dir, environ
 
 const iterationDataFullPath = path.join(cwd, '/postman/collections/iteration-data/Students/');
 
+const collection = readJSONFileSync(path.join(cwd, collectionPath));
 // TODO make this json optional
-const foldersToTest = (await import('file://' + path.join(cwd, 'folders-to-run.json'), { with: { type: 'json' } })).default;
+const foldersToTest = readJSONFileSync(path.join(cwd, 'folders-to-run.json'));
+
 console.log(chalk.white('\nCollection folders to run: '), chalk.greenBright.bold(`\n\t${foldersToTest.join(', \n\t')}`));
 
 const dataFiles = await glob('**/*.{json,csv}', { cwd: iterationDataFullPath, nodir: true });
@@ -108,10 +109,16 @@ await Promise.all(allNewmanPromises).then(() => {
     const allSummaryFailures = allNewmanSummaries.reduce((acc, summary) => acc + summary.summary.run.failures.length, 0);
     if (allSummaryFailures === 0) {
         console.log(chalk.greenBright(overallResultHeaderString, successString));
+        process.exit(0);
     }
     else {
         console.error(chalk.redBright(overallResultHeaderString, failureString));
+        process.exit(1);
     }
+}).catch((err) => {
+    console.error(chalk.redBright('Error running newman:'));
+    console.error(chalk.redBright(err));
+    process.exit(1);
 });
 
 function getMatchingFolderDataFileMappings(dataFiles, foldersToTest) {
@@ -168,13 +175,12 @@ function createNewmanConfig(collection, environmentFilePath, folderPath, dataFil
 }
 
 async function newmanRun(config) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         newman.run(config, (err, summary) => {
             if (err) {
                 console.error(chalk.red(err));
-                throw err;
+                reject(err);
             }
-
 
             resolve(summary);
         });
@@ -224,6 +230,19 @@ function getSummaryTimings(summary) {
         //completed: summary.run.timings.completed,
         totalNewmanRunMs: summary.run.timings.completed - summary.run.timings.started,
     };
+}
+
+function readJSONFileSync(fileFullPath) {
+    let file;
+    try {
+        const raw = fs.readFileSync(fileFullPath, 'utf8');
+        file = JSON.parse(raw);
+    } catch (err) {
+        console.error(chalk.redBright('Error reading/parsing collection file:'), chalk.yellow(fileFullPath));
+        console.error(err);
+        process.exit(2);
+    }
+    return file;
 }
 //TODO improvements for this script:
 // add async progress of newman runs especilly when there are failures and timeouts
