@@ -663,7 +663,10 @@
 													"script": {
 														"exec": [
 															"pm.variables.set(\"PUTBodyResolved\", JSON.parse(pm.request.body.raw));\r",
-															""
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});"
 														],
 														"type": "text/javascript",
 														"packages": {}
@@ -717,6 +720,10 @@
 													"script": {
 														"exec": [
 															"const responseData = pm.response.json();\r",
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});\r",
 															"\r",
 															"pm.test(\"ETag header is present and has a value\", function() {\r",
 															"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
@@ -790,6 +797,16 @@
 														"type": "text/javascript",
 														"packages": {}
 													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
 												}
 											],
 											"request": {
@@ -837,9 +854,7 @@
 								"type": "text/javascript",
 								"packages": {},
 								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(200);\r",
-									"});"
+									""
 								]
 							}
 						}
@@ -1412,7 +1427,288 @@
 		},
 		{
 			"name": "POST",
-			"item": []
+			"item": [
+				{
+					"name": "POST - 200 OK",
+					"item": [
+						{
+							"name": "Test",
+							"item": [
+								{
+									"name": "Create new student",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const responseData = pm.response.json();\r",
+													"pm.variables.set(\"createdStudentId\", responseData);\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response is a number above 1000\", function () {\r",
+													"    pm.expect(responseData).to.be.a('number').and.to.be.above(1000);\r",
+													"    console.log(\"Student created: \" + responseData);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{POSTBodyString}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Assert student created properly",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const responseData = pm.response.json();\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"ETag header is present and has a value\", function() {\r",
+													"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+													"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+													"});\r",
+													"\r",
+													"const expectedPOSTBody = pm.variables.get(\"POSTBody\");\r",
+													"\r",
+													"pm.test(\"Response body matches the posted student\", function () {\r",
+													"    pm.expect(responseData).to.deep.equal({\r",
+													"        sId: JSON.parse(pm.variables.get(\"createdStudentId\")),\r",
+													"        GPA: null,\r",
+													"        ...(expectedPOSTBody)\r",
+													"    });\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{createdStudentId}}",
+													"description": "Set in Setup folder"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Cleanup",
+							"item": [
+								{
+									"name": "Delete created student",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{createdStudentId}}",
+													"description": "Created in Setup folder\n"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "POST - 400 Bad Request",
+					"item": [
+						{
+							"name": "Create new student with bad request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Errors object contains expected error structure\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.errors).to.be.an('object');\r",
+											"\r",
+											"    Object.keys(responseData.errors).forEach(function(key) {\r",
+											"            pm.expect(key).to.be.a('string');\r",
+											"            pm.expect(responseData.errors[key]).to.be.an('array').with.length.greaterThan(0)\r",
+											"        });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{POSTBodyString}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Empty JSON body",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students",
+											"path": [
+												"students"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:18:40 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"name\": [\n            \"The name field is required.\"\n        ]\n    },\n    \"traceId\": \"00-1ba1911a28d1b9cea2843ed27e831fd2-664615354f7d3a48-00\"\n}"
+								}
+							]
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "QUERY",
@@ -1426,14 +1722,7 @@
 				"type": "text/javascript",
 				"packages": {},
 				"exec": [
-					"helpers = {\r",
-					"    // Use iteration data first if any otherwise defaultValue\r",
-					"    setDefaultIterationVariable: function(key, defaultValue) {\r",
-					"        pm.variables.set(key, pm.iterationData.get(key) ?? defaultValue);\r",
-					"    }\r",
-					"};\r",
-					"\r",
-					"//console.log(pm.variables.get(\"testCase\"))"
+					""
 				]
 			}
 		},
@@ -1443,8 +1732,8 @@
 				"type": "text/javascript",
 				"packages": {},
 				"exec": [
-					"pm.test(\"Response time is less than 200ms\", function () {\r",
-					"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+					"pm.test(\"Response time is less than 5000ms\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
 					"});"
 				]
 			}

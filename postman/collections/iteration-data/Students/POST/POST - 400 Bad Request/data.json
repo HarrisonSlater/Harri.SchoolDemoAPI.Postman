@@ -1,0 +1,82 @@
+[
+	{
+		"testCase": "JSON body with no properties",
+		"POSTBody": {
+		}
+	},
+	{
+		"testCase": "Null JSON body",
+		"POSTBody": null
+	},
+	{
+		"testCase": "Empty JSON body string",
+		"POSTBody": ""
+	},
+	{
+		"testCase": "Name - null",
+		"POSTBody": {
+			"name": null
+		}
+	},
+	{
+		"testCase": "Name - null with correct GPA",
+		"POSTBody": {
+			"name": null,
+			"GPA": 3.91
+		}
+	},
+	{
+		"testCase": "Name - missing with correct GPA",
+		"POSTBody": {
+			"GPA": 3.91
+		}
+	},
+	{
+		"testCase": "Name - empty",
+		"POSTBody": {
+			"name": ""
+		}
+	},
+	{
+		"testCase": "Name - integer",
+		"POSTBody": {
+			"name": 123
+		}
+	},
+	{
+		"testCase": "GPA - negative",
+		"POSTBody": {
+			"name": "Valid student name",
+			"GPA": -1
+		}
+	},
+	{
+		"testCase": "GPA - zero",
+		"POSTBody": {
+			"name": "Valid student name",
+			"GPA": 0
+		}
+	},
+	{
+		"testCase": "GPA - number too big",
+		"POSTBody": {
+			"name": "Valid student name",
+			"GPA": 10
+		}
+	},
+	{
+		"testCase": "GPA - number way too big",
+		"POSTBody": {
+			"name": "Valid student name",
+			"GPA": 9223372036854775807
+		}
+	},
+	{
+		"testCase": "GPA - decimal too big",
+		"POSTBody": {
+			"name": "Valid student name",
+			"GPA": 1.555
+		}
+	}
+]
+

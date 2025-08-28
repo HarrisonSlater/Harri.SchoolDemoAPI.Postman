@@ -1,0 +1,22 @@
+[
+	{
+		"testCase": "Post new student",
+		"POSTBody": {
+			"name": "Newly created student"
+		}
+	},
+	{
+		"testCase": "Post new student with GPA",
+		"POSTBody": {
+			"name": "Newly created student",
+			"GPA": 3.91
+		}
+	},
+	{
+		"testCase": "Post new student with null GPA",
+		"POSTBody": {
+			"name": "Newly created student",
+			"GPA": null
+		}
+	}
+]

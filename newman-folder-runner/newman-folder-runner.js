@@ -107,9 +107,10 @@ await Promise.all(allNewmanPromises).then(() => {
     allNewmanSummaries.forEach((summary, index) => {
         const folderName = summary.folderName;
         const statusString = (summary.summary.run.failures.length === 0 ? chalk.greenBright.bold('SUCCESS') : chalk.redBright('FAILURE'));
+        const testScriptsRunString = summary.summary.run.stats.testScripts.total.toString();
 
-        const truncatedFolderName = truncateString(folderName, 60).padEnd(60, ' ');
-        console.log(chalk.whiteBright(`\nFolder: `), chalk.blueBright.bold(truncatedFolderName), ' status: ', statusString);
+        const truncatedFolderName = truncateString(folderName, 50).padEnd(50, ' ');
+        console.log(chalk.whiteBright(`\nFolder: `), chalk.blueBright.bold(truncatedFolderName), ' status: ', statusString, '          test scripts run: ', chalk.magentaBright.bold(testScriptsRunString));
     });
     console.log('');
 
