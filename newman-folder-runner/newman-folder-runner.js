@@ -77,7 +77,15 @@ for (const folderPath in matchingFolderDataFileMappings) {
 
             if (summary.run.failures.length > 0) {
                 console.log(chalk.redBright('Run failures:'));
-                console.table(summary.run.failures)
+                const runFailures = summary.run.failures.map((failure, index) => {
+                    return {
+                        index: index,
+                        error: JSON.stringify(failure.error.name, null, 2),
+                        errorMessage: JSON.stringify(failure.error.message, null, 2),
+                        name: JSON.stringify(failure.source.name, null, 2),
+                    }
+                });
+                console.table(runFailures)
             }
 
             //console.log(chalk.whiteBright('Run executions:'));
