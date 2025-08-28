@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "25430b70-e6f5-4866-90fc-0b0a08413ce7",
 		"name": "StudentDemoAPI - Students Tests - Data Driven",
-		"description": "Tests for individual requests.\n\nEach test sets up data required and cleans up after it self with `Setup` and `Cleanup` folders, except for the basic GET tests\n\npm.test calls are defined at the various folder levels to reduce copy pasted scripts and allow for easier additions of test cases\n\nScripts are only used to set dynamic variables and test. (no pm.sendRequest usage)\n\nTop level folder names must be unique when running with newman --folder\n\nThese tests require json data files to run, different structure per folder 'GET', 'PUT', 'POST', etc\n\nPreconfigured test cases are defined in iteration-data/ grouped by collection, then method.\n\nYou can run all these tests at once with appropriate data files given to each test using the run.bat or run.sh script which runes the custom newman runner node script 'newman-runner-script'\n\nYou can also manually select the appropriate iterationData .json file when running a collection folder\n\nany level of nesting is fine (and probably should correspond to the postman collection) the only thing that the 'newman-runner-script' cares about is the name of sub folders which will be mapped to postman collection folders\n\nIf a folder exists without a corresponding data.json it will be run by the 'newman-runner-script' without iteration data\n\nwhen you add a new folder add the name to the folders-to-test.json\n\nTODO:\n\ncheck csv files work for tests without complex json\n\nexplain PUTBodyResolved, PUTBody, and PUTBodyString usage\n\nNot used:\n\n---\n\nAll variables can be overridden with a data csv or json file like:\n\n``` javascript\npm.variables.set(\"existingStudentName\", pm.iterationData.get(\"existingStudentName\") ?? \"{{$randomFullName}}\")\n\n ```",
+		"description": "Tests for individual requests.\n\nEach test sets up data required and cleans up after it self with `Setup` and `Cleanup` folders, except for the basic GET tests\n\nScripts are only used to set dynamic variables and test. (no pm.sendRequest usage)\n\nTop level folder names must be unique when running with newman --folder\n\nThese tests require json data files to run, different structure per folder 'GET', 'PUT', 'POST', etc\n\ntest case iteration data are defined in iteration-data/ grouped by collection, then method.\n\nYou can run all these tests at once with appropriate data files given to each test using the run.bat or run.sh script (which runs the custom newman runner node script 'newman-runner-script')\n\nYou can also manually select the appropriate iterationData .json file when running a collection folder through the postman app\n\nany level of nesting is fine (and should correspond to the postman collection) the only thing that the 'newman-runner-script' cares about is the name of sub folders which will be mapped to postman collection folders\n\nIf a folder exists without a corresponding data.json it will be run by the 'newman-runner-script' without iteration data\n\nPre- and Post- scripts should be set on individual requests, the only exception is for global scripts at the root collection.\n\nwhen you add a new folder add the name to the folders-to-test.json to be run in CI and when you use the newman-folder-runner script or ./run command\n\nTODO:\n\ncheck csv files work for tests without complex json\n\nexplain PUTBodyResolved, PUTBody, and PUTBodyString usage\n\nNot used:\n\n---\n\nAll variables can be overridden with a data csv or json file like:\n\n``` javascript\npm.variables.set(\"existingStudentName\", pm.iterationData.get(\"existingStudentName\") ?? \"{{$randomFullName}}\")\n\n ```",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2608227",
 		"_collection_link": "https://harridev.postman.co/workspace/SchoolDemoAPI-Workspace~6030e031-453c-4baf-8614-0fed30f79527/collection/2608227-25430b70-e6f5-4866-90fc-0b0a08413ce7?action=share&source=collection_link&creator=2608227"
@@ -145,7 +145,39 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											""
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has the required fields: sId, name, and GPA\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.all.keys('sId', 'name', 'GPA');\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"GPA is a number and within the valid range\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.GPA).to.exist.and.to.be.a('number').and.to.be.within(0, 4.0);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Name must be a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"ETag header is present and has a value\", function() {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+											"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+											"});"
 										],
 										"type": "text/javascript",
 										"packages": {}
@@ -240,39 +272,7 @@
 								"type": "text/javascript",
 								"packages": {},
 								"exec": [
-									"pm.test(\"Response status code is 200\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(200);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Response has the required fields: sId, name, and GPA\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData).to.have.all.keys('sId', 'name', 'GPA');\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"GPA is a number and within the valid range\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.GPA).to.exist.and.to.be.a('number').and.to.be.within(0, 4.0);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Name must be a non-empty string\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
-									"});\r",
-									"\r",
-									"pm.test(\"ETag header is present and has a value\", function() {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
-									"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
-									"});"
+									""
 								]
 							}
 						}
@@ -283,6 +283,32 @@
 					"item": [
 						{
 							"name": "Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"404 Response is correct\", function() {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.have.property('status', 404);\r",
+											"    pm.expect(responseData).to.have.property('title', \"Not Found\");\r",
+											"\r",
+											"})\r",
+											"\r",
+											"pm.test(\"ETag header is not present\", function() {\r",
+											"    pm.expect(pm.response.headers.has('ETag')).to.be.false;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -367,21 +393,7 @@
 								"type": "text/javascript",
 								"packages": {},
 								"exec": [
-									"pm.test(\"Response status code is 404\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(404);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"404 Response is correct\", function() {\r",
-									"    const responseData = pm.response.json();\r",
-									"\r",
-									"    pm.expect(responseData).to.have.property('status', 404);\r",
-									"    pm.expect(responseData).to.have.property('title', \"Not Found\");\r",
-									"\r",
-									"})\r",
-									"\r",
-									"pm.test(\"ETag header is not present\", function() {\r",
-									"    pm.expect(pm.response.headers.has('ETag')).to.be.false;\r",
-									"});"
+									""
 								]
 							}
 						}
@@ -397,6 +409,25 @@
 									"listen": "test",
 									"script": {
 										"exec": [
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.property('status', 400)\r",
+											"    pm.expect(responseData).to.contain.keys('title', 'errors');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Errors object contains expected structure for sId validation\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.errors).to.be.an('object').that.has.property('sId').that.is.an('array');\r",
+											"});\r",
 											""
 										],
 										"type": "text/javascript",
@@ -488,25 +519,6 @@
 								"type": "text/javascript",
 								"packages": {},
 								"exec": [
-									"pm.test(\"Response status code is 400\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(400);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required fields\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData).to.have.property('status', 400)\r",
-									"    pm.expect(responseData).to.contain.keys('title', 'errors');\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Errors object contains expected structure for sId validation\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData.errors).to.be.an('object').that.has.property('sId').that.is.an('array');\r",
-									"});\r",
 									""
 								]
 							}
@@ -1260,7 +1272,23 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"PUTBodyString\", JSON.stringify(pm.variables.get(\"PUTBody\")))"
+											"pm.variables.set(\"PUTBodyString\", JSON.stringify(pm.variables.get(\"PUTBody\")))\r",
+											"\r",
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response time is less than 200ms\", function () {\r",
+											"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.all.keys('type', 'title', 'status', 'errors', 'traceId');\r",
+											"});"
 										],
 										"type": "text/javascript",
 										"packages": {}
@@ -1395,21 +1423,7 @@
 								"type": "text/javascript",
 								"packages": {},
 								"exec": [
-									"pm.test(\"Response status code is 400\", function () {\r",
-									"    pm.expect(pm.response.code).to.equal(400);\r",
-									"});\r",
-									"\r",
-									"pm.test(\"Response time is less than 200ms\", function () {\r",
-									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
-									"});\r",
-									"\r",
-									"\r",
-									"pm.test(\"Response has the required fields\", function () {\r",
-									"    const responseData = pm.response.json();\r",
-									"    \r",
-									"    pm.expect(responseData).to.be.an('object');\r",
-									"    pm.expect(responseData).to.have.all.keys('type', 'title', 'status', 'errors', 'traceId');\r",
-									"});"
+									""
 								]
 							}
 						}
@@ -1619,7 +1633,7 @@
 											"            pm.expect(responseData.errors[key]).to.be.an('array').with.length.greaterThan(0)\r",
 											"        });\r",
 											"});\r",
-											""
+											"namename"
 										],
 										"type": "text/javascript",
 										"packages": {}
