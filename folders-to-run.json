@@ -5,7 +5,9 @@
     "PUT - 200 OK",
     "PUT - 412 Precondition Failed",
     "PUT - 428 Precondition Required",
+	"PUT - 400 Bad Request",
     "PUT - 404 Not Found",
+	"PATCH - 200 OK",
 	"POST - 200 OK",
 	"POST - 400 Bad Request"
 ]
