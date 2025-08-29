@@ -170,13 +170,12 @@ function createNewmanConfig(collection, environmentFilePath, folderPath, dataFil
     const parsedFolderName = path.parse(folderPath);
     return {
         collection: collection,
-        reporters: ['junit'],
+        reporters: ['junitfull'],
         environment: environmentFilePath,
         iterationData: path.join(iterationDataFullPath, folderPath, dataFileName),
         folder: parsedFolderName.base,
         reporter: {
-            junit: {
-                html: false,
+            junitfull: {
                 export: junitExportFilePath
             }
         }
