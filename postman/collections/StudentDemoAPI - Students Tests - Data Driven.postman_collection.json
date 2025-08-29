@@ -1433,7 +1433,320 @@
 		},
 		{
 			"name": "PATCH",
-			"item": []
+			"item": [
+				{
+					"name": "PATCH - 200 OK",
+					"item": [
+						{
+							"name": "Patch existing student",
+							"item": [
+								{
+									"name": "Setup",
+									"item": [
+										{
+											"name": "Create student to update",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"existingStudentId\", pm.response.json());"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))\r",
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{{POSTBodyString}}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/students",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get student ETag",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const etagHeader = pm.response.headers.get('ETag');\r",
+															"pm.variables.set('existingStudentETag', etagHeader);"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"packages": {},
+												"exec": [
+													""
+												]
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"packages": {},
+												"exec": [
+													""
+												]
+											}
+										}
+									]
+								},
+								{
+									"name": "Test",
+									"item": [
+										{
+											"name": "Patch existing student name",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"PATCHBodyString\", JSON.stringify(pm.variables.get(\"PATCHBody\")))"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"PATCHBodyResolved\", JSON.parse(pm.request.body.raw));\r",
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "If-Match",
+														"value": "{{existingStudentETag}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{{PATCHBodyString}}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Set in Setup folder"
+														}
+													]
+												},
+												"description": "### Update Student Information\n\nThis endpoint allows you to update the information of an existing student identified by `existingStudentId`.\n\n#### Request\n\n- **Method**: PUT\n    \n- **URL**: `/students/{{existingStudentId}}`\n    \n\n#### Pre-request Script\n\nBefore making the PUT request, a POST request is sent to the `/students` endpoint to create a new student. The JSON body for this request should include the following parameter:\n\n- **name** (string): The name of the new student to be created.\n    \n\n#### Response\n\nThe response will contain the updated information of the student after the PUT request is made. The structure of the response will typically include the student's updated details.\n\nMake sure to replace `{{existingStudentId}}` with the actual ID of the student you wish to update when making the request.\n\nThis endpoint allows you to update the information of an existing student identified by their unique `existingStudentId`.\n\n### Request\n\n- **Method**: `PUT`\n    \n- **Endpoint**: `/students/{{existingStudentId}}`\n    \n\n### Request Body\n\nThe request body must be sent in JSON format and should include the following parameter:\n\n- **name** (string): The name of the student to be updated.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Existing student name\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with the updated student information, confirming that the changes have been applied.\n\nEnsure that the `existingStudentId` in the URL corresponds to a valid student record in the system before making the request."
+											},
+											"response": []
+										},
+										{
+											"name": "Assert student patched",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const responseData = pm.response.json();\r",
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});\r",
+															"\r",
+															"pm.test(\"ETag header is present and has a value\", function() {\r",
+															"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+															"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+															"});\r",
+															"\r",
+															"const expectedStudent = pm.variables.get(\"ExpectedStudentBody\")\r",
+															"\r",
+															"pm.test(\"Student was updated successfully\", function () {\r",
+															"    pm.expect(responseData).to.deep.equal({\r",
+															"        sId: pm.variables.get(\"existingStudentId\"),\r",
+															"        ...(expectedStudent)\r",
+															"    });\r",
+															"});"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Set in Setup folder"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Cleanup",
+									"item": [
+										{
+											"name": "Delete existing student",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Created in Setup folder\n"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "DELETE",

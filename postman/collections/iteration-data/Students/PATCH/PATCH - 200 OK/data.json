@@ -1,0 +1,16 @@
+[
+	{
+		"testCase": "Patch existing student name",
+		"POSTBody": {
+			"name": "existing student",
+			"GPA": 3.12
+		},
+		"PATCHBody": {
+			"name": "patched student name"
+		},
+		"ExpectedStudentBody": {
+			"name": "patched student name",
+			"GPA": 3.12
+		}
+	}
+]
