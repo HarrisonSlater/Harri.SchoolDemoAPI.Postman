@@ -6,12 +6,6 @@
 		}
 	},
 	{
-		"testCase": "BAD TEST CASE",
-		"POSTBody": {
-			"name": ""
-		}
-	},
-	{
 		"testCase": "Post new student with GPA",
 		"POSTBody": {
 			"name": "Newly created student",
