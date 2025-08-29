@@ -1632,8 +1632,7 @@
 											"            pm.expect(key).to.be.a('string');\r",
 											"            pm.expect(responseData.errors[key]).to.be.an('array').with.length.greaterThan(0)\r",
 											"        });\r",
-											"});\r",
-											"namename"
+											"});"
 										],
 										"type": "text/javascript",
 										"packages": {}
