@@ -99,6 +99,14 @@ stages:
           failTaskOnFailureToPublishResults: true
           failTaskOnMissingResultsFile: true
           searchFolder: newman-reports
+
+      - task: PublishBuildArtifacts@1
+        condition: always()
+        displayName: 'Publish test results and logs artifact'
+        inputs:
+          PathtoPublish: '$(System.DefaultWorkingDirectory)/newman-reports/'
+          ArtifactName: 'newman-reports'
+          publishLocation: 'Container'
           
 - stage: 'PostGithubCommitStatus'
   variables: 
