@@ -98,6 +98,7 @@ stages:
           failTaskOnFailedTests: true
           failTaskOnFailureToPublishResults: true
           failTaskOnMissingResultsFile: true
+          mergeTestResults: true
           
 - stage: 'PostGithubCommitStatus'
   variables: 
