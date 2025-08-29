@@ -98,6 +98,7 @@ stages:
           failTaskOnFailedTests: true
           failTaskOnFailureToPublishResults: true
           failTaskOnMissingResultsFile: true
+          searchFolder: newman-reports
           
 - stage: 'PostGithubCommitStatus'
   variables: 
