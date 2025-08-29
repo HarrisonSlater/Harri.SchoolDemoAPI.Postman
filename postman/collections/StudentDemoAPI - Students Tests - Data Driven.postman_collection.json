@@ -1272,23 +1272,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"pm.variables.set(\"PUTBodyString\", JSON.stringify(pm.variables.get(\"PUTBody\")))\r",
-											"\r",
-											"pm.test(\"Response status code is 400\", function () {\r",
-											"    pm.expect(pm.response.code).to.equal(400);\r",
-											"});\r",
-											"\r",
-											"pm.test(\"Response time is less than 200ms\", function () {\r",
-											"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
-											"});\r",
-											"\r",
-											"\r",
-											"pm.test(\"Response has the required fields\", function () {\r",
-											"    const responseData = pm.response.json();\r",
-											"    \r",
-											"    pm.expect(responseData).to.be.an('object');\r",
-											"    pm.expect(responseData).to.have.all.keys('type', 'title', 'status', 'errors', 'traceId');\r",
-											"});"
+											"pm.variables.set(\"PUTBodyString\", JSON.stringify(pm.variables.get(\"PUTBody\")))"
 										],
 										"type": "text/javascript",
 										"packages": {}
@@ -1302,6 +1286,13 @@
 											"\r",
 											"pm.test(\"Response status code is 400\", function () {\r",
 											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.all.keys('type', 'title', 'status', 'errors', 'traceId');\r",
 											"});"
 										],
 										"type": "text/javascript",
