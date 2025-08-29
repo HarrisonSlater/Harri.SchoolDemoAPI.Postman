@@ -8,6 +8,13 @@
 	"PUT - 400 Bad Request",
     "PUT - 404 Not Found",
 	"PATCH - 200 OK",
+	"PATCH - 412 Precondition Failed",
+	"PATCH - 428 Precondition Required",
+	"PATCH - 400 Bad Request",
+    "PATCH - 404 Not Found",
 	"POST - 200 OK",
-	"POST - 400 Bad Request"
+	"POST - 400 Bad Request",
+	"DELETE - 200 OK",
+	"DELETE - 404 Not Found",
+	"DELETE - 400 Bad Request"
 ]

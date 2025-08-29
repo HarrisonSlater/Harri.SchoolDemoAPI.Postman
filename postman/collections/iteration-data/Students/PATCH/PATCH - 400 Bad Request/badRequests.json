@@ -1,0 +1,24 @@
+[
+	{
+		"PATCHBody": {
+			
+		}
+	},
+	{
+		"PATCHBody": {
+			"name": null
+		}
+	},
+	{
+		"PATCHBody": {
+			"name": "valid name",
+			"GPA": 1234
+		}
+	},
+	{
+		"PATCHBody": null
+	},
+	{
+		"PATCHBody": ""
+	}
+]
