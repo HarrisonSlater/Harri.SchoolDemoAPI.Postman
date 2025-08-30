@@ -1,0 +1,1 @@
+node ./newman-folder-runner/newman-folder-runner.js "$@"

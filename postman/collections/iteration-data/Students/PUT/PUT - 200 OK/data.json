@@ -1,0 +1,45 @@
+[
+	{
+		"testCase": "Update existing student name",
+		"POSTBody": {
+			"name": "existing student",
+			"GPA": null
+		},
+		"PUTBody": {
+			"name": "updated student"
+		}
+	},
+	{
+		"testCase": "Update existing student name and GPA",
+		"POSTBody": {
+			"name": "existing student",
+			"GPA": null
+		},
+		"PUTBody": {
+			"name": "{{$randomFullName}}",
+			"GPA": 3.59
+		}
+	},
+	{
+		"testCase": "Update existing student GPA",
+		"POSTBody": {
+			"name": "existing student",
+			"GPA": 0.1
+		},
+		"PUTBody": {
+			"name": "existing student",
+			"GPA": 2.99
+		}
+	},
+	{
+		"testCase": "Remove existing student GPA",
+		"POSTBody": {
+			"name": "existing student",
+			"GPA": 4
+		},
+		"PUTBody": {
+			"name": "existing student",
+			"GPA": null
+		}
+	}
+]

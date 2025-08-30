@@ -1,0 +1,22 @@
+{
+  "name": "newman-folder-runner",
+  "version": "1.0.0",
+  "description": "",
+  "exports": "./newman-folder-runner.js",
+  "bin": {
+    "newman-folder-runner": "./newman-folder-runner.js"
+  },
+  "scripts": {
+    "test": "node newman-folder-runner.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "chalk": "^5.6.0",
+    "glob": "^11.0.3",
+    "newman": "^6.2.1",
+    "newman-reporter-junitfull": "^1.1.1"
+  }
+}

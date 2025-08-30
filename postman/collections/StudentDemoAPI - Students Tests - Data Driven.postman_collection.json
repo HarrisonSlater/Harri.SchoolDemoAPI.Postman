@@ -1,0 +1,3022 @@
+{
+	"info": {
+		"_postman_id": "25430b70-e6f5-4866-90fc-0b0a08413ce7",
+		"name": "StudentDemoAPI - Students Tests - Data Driven",
+		"description": "# Student Demo API — Postman Tests\n\n**Quick start (2 lines)**\n\n- Put iteration data files in `iteration-data/` and name them `\\\\\\*.json` or `\\\\\\*.csv`.\n    \n- The name must match exactly the name used in the postman collection and must also be present in `folders-to-run.json`\n    \n- See [https://github.com/HarrisonSlater/Harri.SchoolDemoAPI.Postman](https://github.com/HarrisonSlater/Harri.SchoolDemoAPI.Postman) for setup setps\n    \n- Run all tests with `./run.sh` / `run.bat` (uses the custom `newman-runner-script`) or run a single folder in the Postman app by selecting the matching iteration data file.\n    \n\n---\n\n## Overview\n\nThis collection contains **data-driven tests** for the Student Demo API.  \nTests are organized by Postman collection folders grouped by method (e.g. `GET`, `POST`, `PUT`, `QUERY`) and use per-folder iteration data to drive test cases.  \nThe custom node js test runner script maps folder names to collection folders and runs them with Newman.\n\n> The folders to be run are defined in `folders-to-run.json` \n  \n\n---\n\n## Structure & conventions\n\n- **Folder layout**\n    \n    - Top-level folders group by method/feature (e.g. `GET`, `POST`, `PUT`).\n        \n    - Bottom level folder names **must be unique** (These are the direct parent folders of your `\\\\\\*.json` or `\\\\\\*.csv` files.\n        \n    - Any level of nesting is supported but should ideally mirror the Postman collection structure.\n        \n    - If a folder has no matching `data.json` / `data.csv`, it will _NOT_ be executed.\n        \n- **Setup & Cleanup**\n    \n    - Tests that change data should create required data in `Setup` sub-folders and remove it in `Cleanup` sub-folders.\n        \n- **Scripts**\n    \n    - Use request-level scripts to set dynamic variables and assert results.\n        \n    - This project has been created without `pm.sendRequest` — scripts should **only** set variables and run tests.\n        \n    - Pre- and Post- scripts should be attached to **individual requests**. Except for global setup and assertions on the root collection folder\n        \n- **JSON Body**\n    \n    - Any script that uses a full JSON body iteration data is configured with:\n        \n        - Raw JSON body configured in postman like: `{{POSTBodyString}}`\n            \n        - A Pre-req script like: `pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))`\n            \n        - Iteration data like:\n            \n            ``` js\n                        [\n                          {\n                              \"testCase\": \"Post new student\", //optional descriptive test case name, not used in code\n                              \"POSTBody\": {\n                                  \"name\": \"Newly created student\",\n                                  \"GPA\": 3.51\n                          }\n                        }\n            \n             ```\n            \n\n## Note: The QUERY test cases contain a few basic examples of the GET /students/ query api, for more indepth testing see the automated C# E2E tests and contract tests in the SchoolDemoAPI project\n\n## Running tests\n\n- **Run everything**:\n    \n    - `./run.sh` (mac / linux) or `run.bat` (Windows). These call the custom `newman-folder-runner`.\n        \n- **Run a single folder in Postman app**:\n    \n    - Select the folder and attach the appropriate `iterationData.json` (or `.csv`) when you launch the run.\n        \n- **Run a folder with newman manually**:\n    \n    - This is the manual command that the `newman-folder-runner` script will use to run each individual folder with respective data in parallel\\*\n        \n\n> newman run '.\\\\postman\\\\collections\\\\StudentDemoAPI - Students Tests - Data Driven.postman_collection.json' --environment .\\\\postman\\\\collections\\\\Local.postman_environment.json --folder \"PATCH - 200 OK\" --iteration-data '.\\\\postman\\\\collections\\\\iteration-data\\\\Students\\\\PATCH\\\\PATCH - 200 OK\\\\data.json' \n  \n\n---",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2608227",
+		"_collection_link": "https://harridev.postman.co/workspace/SchoolDemoAPI-Workspace~6030e031-453c-4baf-8614-0fed30f79527/collection/2608227-25430b70-e6f5-4866-90fc-0b0a08413ce7?action=share&source=collection_link&creator=2608227"
+	},
+	"item": [
+		{
+			"name": "Setup requests",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is formed correctly\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(response).to.have.property('status');\r",
+									"    pm.expect(response.status).to.equal('Healthy');\r",
+									"    \r",
+									"    pm.expect(response).to.have.property('totalDuration');\r",
+									"    pm.expect(response.totalDuration).to.be.a('string');\r",
+									"    \r",
+									"    pm.expect(response).to.have.property('entries');\r",
+									"    pm.expect(response.entries).to.have.property('sql');\r",
+									"    pm.expect(response.entries.sql).to.have.property('data');\r",
+									"    pm.expect(response.entries.sql).to.have.property('duration');\r",
+									"    pm.expect(response.entries.sql.duration).to.be.a('string');\r",
+									"    pm.expect(response.entries.sql).to.have.property('status');\r",
+									"    pm.expect(response.entries.sql.status).to.equal('Healthy');\r",
+									"    pm.expect(response.entries.sql).to.have.property('tags').that.is.an('array');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Health Check",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "/health",
+									"path": [
+										"health"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "content-type",
+									"value": "application/json"
+								},
+								{
+									"key": "date",
+									"value": "Tue, 12 Aug 2025 09:33:07 GMT"
+								},
+								{
+									"key": "server",
+									"value": "Kestrel"
+								},
+								{
+									"key": "cache-control",
+									"value": "no-store, no-cache"
+								},
+								{
+									"key": "expires",
+									"value": "Thu, 01 Jan 1970 00:00:00 GMT"
+								},
+								{
+									"key": "pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "x-ms-middleware-request-id",
+									"value": "b433bbfd-0323-48d3-9896-2af809f63a78"
+								},
+								{
+									"key": "strict-transport-security",
+									"value": "max-age=31536000; includeSubDomains"
+								},
+								{
+									"key": "transfer-encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"Healthy\",\n    \"totalDuration\": \"00:00:00.0053008\",\n    \"entries\": {\n        \"sql\": {\n            \"data\": {},\n            \"duration\": \"00:00:00.0052018\",\n            \"status\": \"Healthy\",\n            \"tags\": []\n        }\n    }\n}"
+						}
+					]
+				}
+			],
+			"description": "Any requests and scripts to execute first in a collection run"
+		},
+		{
+			"name": "GET",
+			"item": [
+				{
+					"name": "GET - 200 OK",
+					"item": [
+						{
+							"name": "Student",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has the required fields: sId, name, and GPA\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.all.keys('sId', 'name', 'GPA');\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"GPA is a number and within the valid range\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.GPA).to.exist.and.to.be.a('number').and.to.be.within(0, 4.0);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Name must be a non-empty string\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"ETag header is present and has a value\", function() {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+											"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{studentId}}"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Student 1",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "1"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:31:18 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "ETag",
+											"value": "AAAAAAAAD6E="
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sId\": 1,\n    \"name\": \"Olivia Jackson\",\n    \"GPA\": 1.42\n}"
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "GET - 404 Not Found",
+					"item": [
+						{
+							"name": "Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"404 Response is correct\", function() {\r",
+											"    const responseData = pm.response.json();\r",
+											"\r",
+											"    pm.expect(responseData).to.have.property('status', 404);\r",
+											"    pm.expect(responseData).to.have.property('title', \"Not Found\");\r",
+											"\r",
+											"})\r",
+											"\r",
+											"pm.test(\"ETag header is not present\", function() {\r",
+											"    pm.expect(pm.response.headers.has('ETag')).to.be.false;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{studentId}}"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Student 10001",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:31:03 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-0b0256a3d2a15bd63a6fe08502b62518-1fed7f0304504971-00\"\n}"
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "GET - 400 Bad Request",
+					"item": [
+						{
+							"name": "Student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.property('status', 400)\r",
+											"    pm.expect(responseData).to.contain.keys('title', 'errors');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Errors object contains expected structure for sId validation\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.errors).to.be.an('object').that.has.property('sId').that.is.an('array');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{studentId}}"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Student -1",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "-1"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:30:38 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"sId\": [\n            \"Integer should be positive\"\n        ]\n    },\n    \"traceId\": \"00-d5fb9549fe2c54a298ca493981d644ce-cbd3fa222df14f72-00\"\n}"
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "PUT",
+			"item": [
+				{
+					"name": "PUT - 200 OK",
+					"item": [
+						{
+							"name": "Update existing student",
+							"item": [
+								{
+									"name": "Setup",
+									"item": [
+										{
+											"name": "Create student to update",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"existingStudentId\", pm.response.json());"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"//helpers.setDefaultIterationVariable(\"existingStudentName\", \"{{$randomFullName}}\")\r",
+															"//pm.request.body.raw = \"{{POSTBody}}\";\r",
+															"\r",
+															"//console.log(pm.variables.get(\"POSTBody\"))\r",
+															"\r",
+															"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))\r",
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{{POSTBodyString}}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/students",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get student ETag",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const etagHeader = pm.response.headers.get('ETag');\r",
+															"pm.variables.set('existingStudentETag', etagHeader);"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"packages": {},
+												"exec": [
+													""
+												]
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"packages": {},
+												"exec": [
+													""
+												]
+											}
+										}
+									]
+								},
+								{
+									"name": "Test",
+									"item": [
+										{
+											"name": "Update existing student name",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"PUTBodyString\", JSON.stringify(pm.variables.get(\"PUTBody\")))"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"PUTBodyResolved\", JSON.parse(pm.request.body.raw));\r",
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "If-Match",
+														"value": "{{existingStudentETag}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{{PUTBodyString}}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Set in Setup folder"
+														}
+													]
+												},
+												"description": "### Update Student Information\n\nThis endpoint allows you to update the information of an existing student identified by `existingStudentId`.\n\n#### Request\n\n- **Method**: PUT\n    \n- **URL**: `/students/{{existingStudentId}}`\n    \n\n#### Pre-request Script\n\nBefore making the PUT request, a POST request is sent to the `/students` endpoint to create a new student. The JSON body for this request should include the following parameter:\n\n- **name** (string): The name of the new student to be created.\n    \n\n#### Response\n\nThe response will contain the updated information of the student after the PUT request is made. The structure of the response will typically include the student's updated details.\n\nMake sure to replace `{{existingStudentId}}` with the actual ID of the student you wish to update when making the request.\n\nThis endpoint allows you to update the information of an existing student identified by their unique `existingStudentId`.\n\n### Request\n\n- **Method**: `PUT`\n    \n- **Endpoint**: `/students/{{existingStudentId}}`\n    \n\n### Request Body\n\nThe request body must be sent in JSON format and should include the following parameter:\n\n- **name** (string): The name of the student to be updated.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Existing student name\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with the updated student information, confirming that the changes have been applied.\n\nEnsure that the `existingStudentId` in the URL corresponds to a valid student record in the system before making the request."
+											},
+											"response": []
+										},
+										{
+											"name": "Assert student updated",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const responseData = pm.response.json();\r",
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});\r",
+															"\r",
+															"pm.test(\"ETag header is present and has a value\", function() {\r",
+															"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+															"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+															"});\r",
+															"\r",
+															"const expectedStudent = pm.variables.get(\"PUTBodyResolved\")\r",
+															"\r",
+															"\r",
+															"// Assertion debugging\r",
+															"/*\r",
+															"console.log(\"responseData.GPA:\", responseData.GPA)\r",
+															"console.log(\"expectedStudent.GPA: \", expectedStudent.GPA)\r",
+															"\r",
+															"console.log(\"responseData.name:\", responseData.name)\r",
+															"console.log(\"expectedStudent.name: \", expectedStudent.name)\r",
+															"\r",
+															"console.log(\"PUTBodyResolved: \", pm.variables.get(\"PUTBodyResolved\"))\r",
+															"*/\r",
+															"\r",
+															"pm.test(\"Student was updated successfully\", function () {\r",
+															"    pm.expect(responseData).to.deep.equal({\r",
+															"        sId: pm.variables.get(\"existingStudentId\"),\r",
+															"        name: expectedStudent.name,\r",
+															"        GPA: expectedStudent.GPA ?? null\r",
+															"    });\r",
+															"});"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Set in Setup folder"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Cleanup",
+									"item": [
+										{
+											"name": "Delete existing student",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Created in Setup folder\n"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "PUT - 428 Precondition Required",
+					"item": [
+						{
+							"name": "Update missing If-Match header",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 428\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(428);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body contains status and traceId\", function () {\r",
+											"    const response = pm.response.json();\r",
+											"    pm.expect(response).to.have.property('status');\r",
+											"    pm.expect(response).to.have.property('traceId');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response headers contain Content-Type\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json; charset=utf-8\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{existingStudentId}}",
+											"description": "Set in pre-request script"
+										}
+									]
+								},
+								"description": "### Update Student Information\n\nThis endpoint allows you to update the information of an existing student identified by `existingStudentId`.\n\n#### Request\n\n- **Method**: PUT\n    \n- **URL**: `/students/{{existingStudentId}}`\n    \n\n#### Pre-request Script\n\nBefore making the PUT request, a POST request is sent to the `/students` endpoint to create a new student. The JSON body for this request should include the following parameter:\n\n- **name** (string): The name of the new student to be created.\n    \n\n#### Response\n\nThe response will contain the updated information of the student after the PUT request is made. The structure of the response will typically include the student's updated details.\n\nMake sure to replace `{{existingStudentId}}` with the actual ID of the student you wish to update when making the request.\n\nThis endpoint allows you to update the information of an existing student identified by their unique `existingStudentId`.\n\n### Request\n\n- **Method**: `PUT`\n    \n- **Endpoint**: `/students/{{existingStudentId}}`\n    \n\n### Request Body\n\nThe request body must be sent in JSON format and should include the following parameter:\n\n- **name** (string): The name of the student to be updated.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Existing student name\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with the updated student information, confirming that the changes have been applied.\n\nEnsure that the `existingStudentId` in the URL corresponds to a valid student record in the system before making the request."
+							},
+							"response": [
+								{
+									"name": "Update missing If-Match header",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{existingStudentId}}",
+													"description": "Set in pre-request script"
+												}
+											]
+										}
+									},
+									"status": "Precondition Required",
+									"code": 428,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:15:56 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": 428,\n    \"traceId\": \"00-1716a210260b98cf9955f3e4cc524979-aec79147ee6eb926-00\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "PUT - 412 Precondition Failed",
+					"item": [
+						{
+							"name": "Update with wrong If-Match header",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 412\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(412);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body contains status and traceId\", function () {\r",
+											"    const response = pm.response.json();\r",
+											"    pm.expect(response).to.have.property('status');\r",
+											"    pm.expect(response).to.have.property('traceId');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response headers contain Content-Type\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json; charset=utf-8\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{ifMatchHeader}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{existingStudentId}}",
+											"description": "Set in pre-request script"
+										}
+									]
+								},
+								"description": "### Update Student Information\n\nThis endpoint allows you to update the information of an existing student identified by `existingStudentId`.\n\n#### Request\n\n- **Method**: PUT\n    \n- **URL**: `/students/{{existingStudentId}}`\n    \n\n#### Pre-request Script\n\nBefore making the PUT request, a POST request is sent to the `/students` endpoint to create a new student. The JSON body for this request should include the following parameter:\n\n- **name** (string): The name of the new student to be created.\n    \n\n#### Response\n\nThe response will contain the updated information of the student after the PUT request is made. The structure of the response will typically include the student's updated details.\n\nMake sure to replace `{{existingStudentId}}` with the actual ID of the student you wish to update when making the request.\n\nThis endpoint allows you to update the information of an existing student identified by their unique `existingStudentId`.\n\n### Request\n\n- **Method**: `PUT`\n    \n- **Endpoint**: `/students/{{existingStudentId}}`\n    \n\n### Request Body\n\nThe request body must be sent in JSON format and should include the following parameter:\n\n- **name** (string): The name of the student to be updated.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Existing student name\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with the updated student information, confirming that the changes have been applied.\n\nEnsure that the `existingStudentId` in the URL corresponds to a valid student record in the system before making the request."
+							},
+							"response": [
+								{
+									"name": "Update with wrong If-Match header",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "If-Match",
+												"value": "",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{existingStudentId}}",
+													"description": "Set in pre-request script"
+												}
+											]
+										}
+									},
+									"status": "Precondition Failed",
+									"code": 412,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:14:52 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.13\",\n    \"title\": \"Precondition Failed\",\n    \"status\": 412,\n    \"traceId\": \"00-8911d2b82a0122b0294ff058ac564c06-6f7c53dc12bf93e7-00\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "PUT - 404 Not Found",
+					"item": [
+						{
+							"name": "Update non-existing student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Content-Type is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "AAAAAAABKU0=",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{studentId}}"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update non-existing student",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "If-Match",
+												"value": "AAAAAAABKU0=",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:14:13 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-413be55f28ba53556a2cc3ed9a1c64e0-7f2c73a99fccf9d4-00\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "PUT - 400 Bad Request",
+					"item": [
+						{
+							"name": "Update with bad request",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"PUTBodyString\", JSON.stringify(pm.variables.get(\"PUTBody\")))"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"PUTBodyResolved\", JSON.parse(pm.request.body.raw));\r",
+											"\r",
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.have.all.keys('type', 'title', 'status', 'errors', 'traceId');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "1",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{PUTBodyString}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "10001"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update with bad request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "If-Match",
+												"value": "1",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:13:46 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"name\": [\n            \"The name field is required.\"\n        ]\n    },\n    \"traceId\": \"00-f1eae759ac6b6848a493b9c0e17b6135-13d575b1d524ea15-00\"\n}"
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "PATCH",
+			"item": [
+				{
+					"name": "PATCH - 200 OK",
+					"item": [
+						{
+							"name": "Patch existing student",
+							"item": [
+								{
+									"name": "Setup",
+									"item": [
+										{
+											"name": "Create student to update",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"existingStudentId\", pm.response.json());"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))\r",
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{{POSTBodyString}}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/students",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "Get student ETag",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const etagHeader = pm.response.headers.get('ETag');\r",
+															"pm.variables.set('existingStudentETag', etagHeader);"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									],
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"type": "text/javascript",
+												"packages": {},
+												"exec": [
+													""
+												]
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"type": "text/javascript",
+												"packages": {},
+												"exec": [
+													""
+												]
+											}
+										}
+									]
+								},
+								{
+									"name": "Test",
+									"item": [
+										{
+											"name": "Patch existing student name",
+											"event": [
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"PATCHBodyString\", JSON.stringify(pm.variables.get(\"PATCHBody\")))"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"pm.variables.set(\"PATCHBodyResolved\", JSON.parse(pm.request.body.raw));\r",
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});\r",
+															"\r",
+															"const responseData = pm.response.json();\r",
+															"const expectedStudent = pm.variables.get(\"ExpectedStudentBody\")\r",
+															"pm.test(\"Patch response body is correct\", function () {\r",
+															"    pm.expect(responseData).to.deep.equal({\r",
+															"        sId: pm.variables.get(\"existingStudentId\"),\r",
+															"        ...(expectedStudent)\r",
+															"    });\r",
+															"});"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "PATCH",
+												"header": [
+													{
+														"key": "If-Match",
+														"value": "{{existingStudentETag}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{{PATCHBodyString}}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Set in Setup folder"
+														}
+													]
+												},
+												"description": "### Update Student Information\n\nThis endpoint allows you to update the information of an existing student identified by `existingStudentId`.\n\n#### Request\n\n- **Method**: PUT\n    \n- **URL**: `/students/{{existingStudentId}}`\n    \n\n#### Pre-request Script\n\nBefore making the PUT request, a POST request is sent to the `/students` endpoint to create a new student. The JSON body for this request should include the following parameter:\n\n- **name** (string): The name of the new student to be created.\n    \n\n#### Response\n\nThe response will contain the updated information of the student after the PUT request is made. The structure of the response will typically include the student's updated details.\n\nMake sure to replace `{{existingStudentId}}` with the actual ID of the student you wish to update when making the request.\n\nThis endpoint allows you to update the information of an existing student identified by their unique `existingStudentId`.\n\n### Request\n\n- **Method**: `PUT`\n    \n- **Endpoint**: `/students/{{existingStudentId}}`\n    \n\n### Request Body\n\nThe request body must be sent in JSON format and should include the following parameter:\n\n- **name** (string): The name of the student to be updated.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Existing student name\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with the updated student information, confirming that the changes have been applied.\n\nEnsure that the `existingStudentId` in the URL corresponds to a valid student record in the system before making the request."
+											},
+											"response": []
+										},
+										{
+											"name": "Assert student patched",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															"const responseData = pm.response.json();\r",
+															"\r",
+															"pm.test(\"Status code is 200\", function () {\r",
+															"    pm.expect(pm.response.code).to.equal(200);\r",
+															"});\r",
+															"\r",
+															"pm.test(\"ETag header is present and has a value\", function() {\r",
+															"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+															"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+															"});\r",
+															"\r",
+															"const expectedStudent = pm.variables.get(\"ExpectedStudentBody\")\r",
+															"\r",
+															"pm.test(\"Student was updated successfully\", function () {\r",
+															"    pm.expect(responseData).to.deep.equal({\r",
+															"        sId: pm.variables.get(\"existingStudentId\"),\r",
+															"        ...(expectedStudent)\r",
+															"    });\r",
+															"});"
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Set in Setup folder"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								},
+								{
+									"name": "Cleanup",
+									"item": [
+										{
+											"name": "Delete existing student",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"exec": [
+															""
+														],
+														"type": "text/javascript",
+														"packages": {}
+													}
+												}
+											],
+											"request": {
+												"method": "DELETE",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/students/:sId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"students",
+														":sId"
+													],
+													"variable": [
+														{
+															"key": "sId",
+															"value": "{{existingStudentId}}",
+															"description": "Created in Setup folder\n"
+														}
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "PATCH - 428 Precondition Required",
+					"item": [
+						{
+							"name": "Patch existing student name",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"PATCHBodyString\", JSON.stringify(pm.variables.get(\"PATCHBody\")))"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"PATCHBodyResolved\", JSON.parse(pm.request.body.raw));\r",
+											"\r",
+											"pm.test(\"Status code is 428\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(428);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Patched student name\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{existingStudentId}}",
+											"description": "Set in Setup folder"
+										}
+									]
+								},
+								"description": "### Update Student Information\n\nThis endpoint allows you to update the information of an existing student identified by `existingStudentId`.\n\n#### Request\n\n- **Method**: PUT\n    \n- **URL**: `/students/{{existingStudentId}}`\n    \n\n#### Pre-request Script\n\nBefore making the PUT request, a POST request is sent to the `/students` endpoint to create a new student. The JSON body for this request should include the following parameter:\n\n- **name** (string): The name of the new student to be created.\n    \n\n#### Response\n\nThe response will contain the updated information of the student after the PUT request is made. The structure of the response will typically include the student's updated details.\n\nMake sure to replace `{{existingStudentId}}` with the actual ID of the student you wish to update when making the request.\n\nThis endpoint allows you to update the information of an existing student identified by their unique `existingStudentId`.\n\n### Request\n\n- **Method**: `PUT`\n    \n- **Endpoint**: `/students/{{existingStudentId}}`\n    \n\n### Request Body\n\nThe request body must be sent in JSON format and should include the following parameter:\n\n- **name** (string): The name of the student to be updated.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Existing student name\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with the updated student information, confirming that the changes have been applied.\n\nEnsure that the `existingStudentId` in the URL corresponds to a valid student record in the system before making the request."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PATCH - 412 Precondition Failed",
+					"item": [
+						{
+							"name": "Patch wrong If-Match header",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 412\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(412);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body contains status and traceId\", function () {\r",
+											"    const response = pm.response.json();\r",
+											"    pm.expect(response).to.have.property('status');\r",
+											"    pm.expect(response).to.have.property('traceId');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response headers contain Content-Type\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json; charset=utf-8\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "{{ifMatchHeader}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Patched student name\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{existingStudentId}}",
+											"description": "Set in pre-request script"
+										}
+									]
+								},
+								"description": "### Update Student Information\n\nThis endpoint allows you to update the information of an existing student identified by `existingStudentId`.\n\n#### Request\n\n- **Method**: PUT\n    \n- **URL**: `/students/{{existingStudentId}}`\n    \n\n#### Pre-request Script\n\nBefore making the PUT request, a POST request is sent to the `/students` endpoint to create a new student. The JSON body for this request should include the following parameter:\n\n- **name** (string): The name of the new student to be created.\n    \n\n#### Response\n\nThe response will contain the updated information of the student after the PUT request is made. The structure of the response will typically include the student's updated details.\n\nMake sure to replace `{{existingStudentId}}` with the actual ID of the student you wish to update when making the request.\n\nThis endpoint allows you to update the information of an existing student identified by their unique `existingStudentId`.\n\n### Request\n\n- **Method**: `PUT`\n    \n- **Endpoint**: `/students/{{existingStudentId}}`\n    \n\n### Request Body\n\nThe request body must be sent in JSON format and should include the following parameter:\n\n- **name** (string): The name of the student to be updated.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"name\": \"Existing student name\"\n}\n\n ```\n\n### Response\n\nUpon a successful update, the server will respond with the updated student information, confirming that the changes have been applied.\n\nEnsure that the `existingStudentId` in the URL corresponds to a valid student record in the system before making the request."
+							},
+							"response": [
+								{
+									"name": "Update with wrong If-Match header",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "If-Match",
+												"value": "",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{existingStudentId}}",
+													"description": "Set in pre-request script"
+												}
+											]
+										}
+									},
+									"status": "Precondition Failed",
+									"code": 412,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:14:52 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.13\",\n    \"title\": \"Precondition Failed\",\n    \"status\": 412,\n    \"traceId\": \"00-8911d2b82a0122b0294ff058ac564c06-6f7c53dc12bf93e7-00\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "PATCH - 404 Not Found",
+					"item": [
+						{
+							"name": "Update non-existing student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Content-Type is application/json\", function () {\r",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "AAAAAAABKU0=",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{studentId}}"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update non-existing student",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "If-Match",
+												"value": "AAAAAAABKU0=",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Updated postman student name\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:14:13 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.5\",\n    \"title\": \"Not Found\",\n    \"status\": 404,\n    \"traceId\": \"00-413be55f28ba53556a2cc3ed9a1c64e0-7f2c73a99fccf9d4-00\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "PATCH - 400 Bad Request",
+					"item": [
+						{
+							"name": "Update with bad request",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"PATCHBodyString\", JSON.stringify(pm.variables.get(\"PATCHBody\")))"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"PATCHBodyResolved\", JSON.parse(pm.request.body.raw));\r",
+											"\r",
+											"pm.test(\"Response status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response has the required fields\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData).to.contain.keys('type', 'title', 'status', 'traceId');\r",
+											"    // should assert 'errors' key also but there is a bug with sending empty body returning no message with a 400\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "If-Match",
+										"value": "AAAAAAAAD7k=",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{PATCHBodyString}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "10001"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Update with bad request",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "If-Match",
+												"value": "1",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students/:sId",
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "10001"
+												}
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:13:46 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"name\": [\n            \"The name field is required.\"\n        ]\n    },\n    \"traceId\": \"00-f1eae759ac6b6848a493b9c0e17b6135-13d575b1d524ea15-00\"\n}"
+								}
+							]
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "DELETE",
+			"item": [
+				{
+					"name": "DELETE - 200 OK",
+					"item": [
+						{
+							"name": "Setup",
+							"item": [
+								{
+									"name": "Create student to update",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.variables.set(\"existingStudentId\", pm.response.json());"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")));"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{POSTBodyString}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Test",
+							"item": [
+								{
+									"name": "Delete student",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(200);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{existingStudentId}}",
+													"description": "(Required) Student Id"
+												}
+											]
+										},
+										"description": "Deletes a student record"
+									},
+									"response": []
+								},
+								{
+									"name": "Assert student deleted",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const responseData = pm.response.json();\r",
+													"\r",
+													"pm.test(\"Status code is 404\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(404);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{existingStudentId}}",
+													"description": "Set in Setup folder"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "DELETE - 404 Not Found",
+					"item": [
+						{
+							"name": "Delete non-existing student",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(404);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{studentId}}",
+											"description": "(Required) Student Id"
+										}
+									]
+								},
+								"description": "Deletes a student record"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "DELETE - 400 Bad Request",
+					"item": [
+						{
+							"name": "Delete student bad request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.expect(pm.response.code).to.equal(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/students/:sId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students",
+										":sId"
+									],
+									"variable": [
+										{
+											"key": "sId",
+											"value": "{{studentId}}",
+											"description": "(Required) Student Id"
+										}
+									]
+								},
+								"description": "Deletes a student record"
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "POST",
+			"item": [
+				{
+					"name": "POST - 200 OK",
+					"item": [
+						{
+							"name": "Test",
+							"item": [
+								{
+									"name": "Create new student",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const responseData = pm.response.json();\r",
+													"pm.variables.set(\"createdStudentId\", responseData);\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response is a number above 1000\", function () {\r",
+													"    pm.expect(responseData).to.be.a('number').and.to.be.above(1000);\r",
+													"    console.log(\"Student created: \" + responseData);\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{POSTBodyString}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/students",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Assert student created properly",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const responseData = pm.response.json();\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.response.to.have.status(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"ETag header is present and has a value\", function() {\r",
+													"    pm.expect(pm.response.headers.has('ETag')).to.be.true;\r",
+													"    pm.expect(pm.response.headers.get('ETag')).to.not.be.empty;\r",
+													"});\r",
+													"\r",
+													"const expectedPOSTBody = pm.variables.get(\"POSTBody\");\r",
+													"\r",
+													"pm.test(\"Response body matches the posted student\", function () {\r",
+													"    pm.expect(responseData).to.deep.equal({\r",
+													"        sId: JSON.parse(pm.variables.get(\"createdStudentId\")),\r",
+													"        GPA: null,\r",
+													"        ...(expectedPOSTBody)\r",
+													"    });\r",
+													"});"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{createdStudentId}}",
+													"description": "Set in Setup folder"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Cleanup",
+							"item": [
+								{
+									"name": "Delete created student",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students/:sId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students",
+												":sId"
+											],
+											"variable": [
+												{
+													"key": "sId",
+													"value": "{{createdStudentId}}",
+													"description": "Created in Setup folder\n"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "POST - 400 Bad Request",
+					"item": [
+						{
+							"name": "Create new student with bad request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Errors object contains expected error structure\", function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    \r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.errors).to.be.an('object');\r",
+											"\r",
+											"    Object.keys(responseData.errors).forEach(function(key) {\r",
+											"            pm.expect(key).to.be.a('string');\r",
+											"            pm.expect(responseData.errors[key]).to.be.an('array').with.length.greaterThan(0)\r",
+											"        });\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.variables.set(\"POSTBodyString\", JSON.stringify(pm.variables.get(\"POSTBody\")))"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{POSTBodyString}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/students",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"students"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Empty JSON body",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "/students",
+											"path": [
+												"students"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 06 Aug 2025 05:18:40 GMT"
+										},
+										{
+											"key": "Server",
+											"value": "Kestrel"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"type\": \"https://tools.ietf.org/html/rfc9110#section-15.5.1\",\n    \"title\": \"One or more validation errors occurred.\",\n    \"status\": 400,\n    \"errors\": {\n        \"name\": [\n            \"The name field is required.\"\n        ]\n    },\n    \"traceId\": \"00-1ba1911a28d1b9cea2843ed27e831fd2-664615354f7d3a48-00\"\n}"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "QUERY",
+			"item": [
+				{
+					"name": "QUERY - 200 OK",
+					"item": [
+						{
+							"name": "QUERY - 200 OK - By SId",
+							"item": [
+								{
+									"name": "Students",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response has correct structure\", function () {\r",
+													"    pm.expect(response).to.have.all.keys('items', 'page', 'pageSize', 'totalCount', 'totalPageCount', 'hasNextPage', 'hasPreviousPage');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Items is an array\", function () {\r",
+													"    pm.expect(response.items).to.be.an('array').and.to.have.length.greaterThanOrEqual(1);\r",
+													"    response.items.forEach(item => {\r",
+													"        pm.expect(item).to.have.all.keys('sId', 'name', 'GPA');\r",
+													"        pm.expect(item.sId).to.be.a('number');\r",
+													"        pm.expect(item.name).to.be.a('string');\r",
+													"        pm.expect(typeof item.GPA).to.be.oneOf(['number', 'object']);\r",
+													"    });\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Pagination details are correct\", function () {\r",
+													"    pm.expect(response.page).to.be.a('number');\r",
+													"    pm.expect(response.pageSize).to.be.a('number');\r",
+													"    pm.expect(response.totalCount).to.be.a('number');\r",
+													"    pm.expect(response.totalPageCount).to.be.a('number');\r",
+													"    pm.expect(response.hasNextPage).to.be.a('boolean');\r",
+													"    pm.expect(response.hasPreviousPage).to.be.a('boolean');\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students?sId={{sId}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students"
+											],
+											"query": [
+												{
+													"key": "sId",
+													"value": "{{sId}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "QUERY - 200 OK - By Name",
+							"item": [
+								{
+									"name": "Students",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response has correct structure\", function () {\r",
+													"    pm.expect(response).to.have.all.keys('items', 'page', 'pageSize', 'totalCount', 'totalPageCount', 'hasNextPage', 'hasPreviousPage');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Items is an array\", function () {\r",
+													"    pm.expect(response.items).to.be.an('array').and.to.have.length.greaterThanOrEqual(1);\r",
+													"    response.items.forEach(item => {\r",
+													"        pm.expect(item).to.have.all.keys('sId', 'name', 'GPA');\r",
+													"        pm.expect(item.sId).to.be.a('number');\r",
+													"        pm.expect(item.name).to.be.a('string');\r",
+													"        pm.expect(typeof item.GPA).to.be.oneOf(['number', 'object']);\r",
+													"    });\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Pagination details are correct\", function () {\r",
+													"    pm.expect(response.page).to.be.a('number');\r",
+													"    pm.expect(response.pageSize).to.be.a('number');\r",
+													"    pm.expect(response.totalCount).to.be.a('number');\r",
+													"    pm.expect(response.totalPageCount).to.be.a('number');\r",
+													"    pm.expect(response.hasNextPage).to.be.a('boolean');\r",
+													"    pm.expect(response.hasPreviousPage).to.be.a('boolean');\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students?name={{name}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students"
+											],
+											"query": [
+												{
+													"key": "name",
+													"value": "{{name}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "QUERY - 200 OK - By GPA",
+							"item": [
+								{
+									"name": "Students",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"const response = pm.response.json();\r",
+													"\r",
+													"pm.test(\"Status code is 200\", function () {\r",
+													"    pm.expect(pm.response.code).to.equal(200);\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Response has correct structure\", function () {\r",
+													"    pm.expect(response).to.have.all.keys('items', 'page', 'pageSize', 'totalCount', 'totalPageCount', 'hasNextPage', 'hasPreviousPage');\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Items is an array\", function () {\r",
+													"    pm.expect(response.items).to.be.an('array').and.to.have.length.greaterThanOrEqual(1);\r",
+													"    response.items.forEach(item => {\r",
+													"        pm.expect(item).to.have.all.keys('sId', 'name', 'GPA');\r",
+													"        pm.expect(item.sId).to.be.a('number');\r",
+													"        pm.expect(item.name).to.be.a('string');\r",
+													"        pm.expect(typeof item.GPA).to.be.oneOf(['number', 'object']);\r",
+													"    });\r",
+													"});\r",
+													"\r",
+													"pm.test(\"Pagination details are correct\", function () {\r",
+													"    pm.expect(response.page).to.be.a('number');\r",
+													"    pm.expect(response.pageSize).to.be.a('number');\r",
+													"    pm.expect(response.totalCount).to.be.a('number');\r",
+													"    pm.expect(response.totalPageCount).to.be.a('number');\r",
+													"    pm.expect(response.hasNextPage).to.be.a('boolean');\r",
+													"    pm.expect(response.hasPreviousPage).to.be.a('boolean');\r",
+													"});\r",
+													""
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/students?GPA.eq={{eq}}&GPA.gt={{gt}}&GPA.lt={{lt}}&GPA.isNull={{isNull}}",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"students"
+											],
+											"query": [
+												{
+													"key": "GPA.eq",
+													"value": "{{eq}}"
+												},
+												{
+													"key": "GPA.gt",
+													"value": "{{gt}}"
+												},
+												{
+													"key": "GPA.lt",
+													"value": "{{lt}}"
+												},
+												{
+													"key": "GPA.isNull",
+													"value": "{{isNull}}"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"Response time is less than 5000ms\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);\r",
+					"});"
+				]
+			}
+		}
+	]
+}

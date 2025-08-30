@@ -1,0 +1,23 @@
+[
+    "GET - 200 OK",
+    "GET - 404 Not Found",
+    "GET - 400 Bad Request",
+    "PUT - 200 OK",
+    "PUT - 412 Precondition Failed",
+    "PUT - 428 Precondition Required",
+	"PUT - 400 Bad Request",
+    "PUT - 404 Not Found",
+	"PATCH - 200 OK",
+	"PATCH - 412 Precondition Failed",
+	"PATCH - 428 Precondition Required",
+	"PATCH - 400 Bad Request",
+    "PATCH - 404 Not Found",
+	"POST - 200 OK",
+	"POST - 400 Bad Request",
+	"DELETE - 200 OK",
+	"DELETE - 404 Not Found",
+	"DELETE - 400 Bad Request",
+	"QUERY - 200 OK - By SId",
+	"QUERY - 200 OK - By Name",
+	"QUERY - 200 OK - By GPA"
+]

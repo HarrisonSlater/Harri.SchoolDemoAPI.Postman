@@ -1,0 +1,7 @@
+[
+	{
+		"POSTBody": {
+			"name": "{{$randomFullName}}"
+		}
+	}
+]

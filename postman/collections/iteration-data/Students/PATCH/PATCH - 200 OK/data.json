@@ -1,0 +1,45 @@
+[
+	{
+		"testCase": "Patch existing student name",
+		"POSTBody": {
+			"name": "existing student",
+			"GPA": 3.12
+		},
+		"PATCHBody": {
+			"name": "patched student name"
+		},
+		"ExpectedStudentBody": {
+			"name": "patched student name",
+			"GPA": 3.12
+		}
+	},
+	{
+		"testCase": "Patch existing student GPA",
+		"POSTBody": {
+			"name": "existing student",
+			"GPA": 3.12
+		},
+		"PATCHBody": {
+			"GPA": 4
+		},
+		"ExpectedStudentBody": {
+			"name": "existing student",
+			"GPA": 4
+		}
+	},
+	{
+		"testCase": "Patch full student",
+		"POSTBody": {
+			"name": "existing student",	
+			"GPA": 3.12
+		},
+		"PATCHBody": {
+			"name": "patched student name",
+			"GPA": 2.11
+		},
+		"ExpectedStudentBody": {
+			"name": "patched student name",
+			"GPA": 2.11
+		}
+	}
+]
