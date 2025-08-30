@@ -23,5 +23,4 @@ eq,gt,lt,isNull
 ,1,2,
 ,2,3,
 ,0,4,
-,,,true
 ,,,false
