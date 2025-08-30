@@ -16,5 +16,8 @@
 	"POST - 400 Bad Request",
 	"DELETE - 200 OK",
 	"DELETE - 404 Not Found",
-	"DELETE - 400 Bad Request"
+	"DELETE - 400 Bad Request",
+	"QUERY - 200 OK - By SId",
+	"QUERY - 200 OK - By Name",
+	"QUERY - 200 OK - By GPA"
 ]
