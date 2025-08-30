@@ -2,7 +2,7 @@
 
 **Postman Collection & Newman Pipeline for the [Harri.SchoolDemoAPI REST API](https://github.com/HarrisonSlater/Harri.SchoolDemoAPI)**
 
-This repository provides a Postman Collection alongside a Newman-based collection runner setup to streamline automated Postman API testing for the `Harri.SchoolDemoAPI` project (a .NET 8-based CRUD REST API).
+This repository provides a Postman Collection alongside a custom Newman-based collection runner setup to streamline automated Postman API testing for the `Harri.SchoolDemoAPI` project (a .NET 8-based CRUD REST API).
 
 ## Features
 
