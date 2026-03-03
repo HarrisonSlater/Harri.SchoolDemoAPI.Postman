@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This repository contains a Postman Collection and a custom Newman-based collection runner for automated API testing of the [Harri.SchoolDemoAPI](https://github.com/HarrisonSlater/Harri.SchoolDemoAPI) (.NET 8 CRUD REST API). It includes standard and data-driven Postman collections, a Node.js runner script, and an Azure DevOps CI pipeline.
+This repository contains a Postman Collection and a custom Newman-based collection runner for automated API testing of the [Harri.SchoolDemoAPI](https://github.com/HarrisonSlater/Harri.SchoolDemoAPI) (.NET 8 CRUD REST API). It includes standard and data-driven Postman collections, a Node.js runner script, an Azure DevOps CI pipeline.
 
 ## Repository Structure
 
